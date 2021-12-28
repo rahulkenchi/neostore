@@ -1,8 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Footer from './component/Footer';
 import NavigationBar from './component/NavigationBar';
-
+import Login from './component/Login';
 function App() {
 
   let a = {
@@ -13,8 +14,12 @@ function App() {
 
   return (
     <div >
-      {console.log(a.join())}
       <NavigationBar />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />}></Route>
+        </Routes>
+      </BrowserRouter>
       <Footer />
     </div>
   );

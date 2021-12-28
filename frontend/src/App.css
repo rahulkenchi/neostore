@@ -36,3 +36,87 @@
     transform: rotate(360deg);
   }
 }
+
+.loginpage{
+  display: flex;
+}
+
+.loginpage>div{
+  width: 100%;
+}
+
+.login{
+  display: flex;
+  height:auto;
+  padding-Left:20px;
+  justify-content: flex-start;
+  background-color:red;
+}
+
+.login>Form{
+  height:50%;
+}
+
+.socialLogin{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.socialLogin>div{
+  display: flex;  
+  justify-content: center;
+  align-items: center;
+  width:30vw;
+  height:10vh;   
+  margin:auto;
+  color:white;
+  font-weight: bolder;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  word-break: break-all;
+  overflow: hidden;
+  border-radius: 5px;  
+}
+
+.socialLogin>div:hover{
+  cursor:pointer;
+  transform: scale(1.03) ;
+}
+
+.customneofooter{
+  display: flex;
+  padding:5px;
+  background-color: black;
+  text-align: center; 
+  color:white ;
+  justify-content: space-around; 
+}
+
+.customneofooter>div{
+  width: 30vw;
+  word-break: break-word;
+}
+
+.customneofooter>div>ul{
+  list-style: none;
+  padding-left: 0
+}
+
+@media screen and (max-width: 480px) {
+  .customneofooter{
+    flex-direction: column-reverse;
+    justify-content: center;
+  }
+
+  .customneofooter>div{
+    margin:10px 0;
+    width:100%;
+    border-bottom: 2px solid grey;
+  }
+
+  .customneofooter>div:first-child{
+    margin-bottom: 0;
+  }
+
+}
