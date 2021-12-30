@@ -1,20 +1,81 @@
 import React, { useState } from 'react'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
 import { MdPhone, MdInfo } from 'react-icons/md'
-import { Container, Form, FormControl, InputGroup, Button, ButtonGroup, ToggleButton } from 'react-bootstrap'
+import { Container, Form, FormControl, InputGroup, Button } from 'react-bootstrap'
+const regExpName = new RegExp(/^[a-zA-Z]{2,20}$/)
+const regExpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+const regExpPass = new RegExp(/^[a-zA-Z]{8,20}$/)
+const regMobile = new RegExp(/^[987][0-9]{9}$/)
+
 const styled = {
     margin: 0,
-    fontSize: 'small'
+    fontSize: 'small',
+    color: 'red'
 }
 export default function Registeration() {
+    const navigate = useNavigate()
     const [showpassword, setShowPassword] = useState(false)
     const [showconfirmpassword, setShowConfirmPassword] = useState(false)
-    const [data, setData] = useState({ firstname: '', lastname: '', email: '', password: '', confirm_password: '', mobile: '', gender: '' })
-    const [errors, setErrors] = useState({ firstname: '', lastname: '', email: '', password: '', confirm_password: '', mobile: '', gender: '' })
+    const [data, setData] = useState({ firstname: '', lastname: '', email: '', password: '', confirm_password: ' ', mobile: '', gender: '' })
+    const [errors, setErrors] = useState({ firstname: '', lastname: '', email: '', password: '', confirm_password: '', mobile: '', gender: 'not selected', submit: '' })
 
     function handler(e) {
-        console.log(e.target.name, e.target.value)
+        let n = e.target.name
+        let v = e.target.value
+        if (n === "firstname" || n === "lastname") {
+            !regExpName.test(v) ? setErrors({ ...errors, [n]: "Not a valid Name" }) : setErrors({ ...errors, [n]: "" })
+        }
+        if (n === "email") {
+            !regExpEmail.test(v) ? setErrors({ ...errors, [n]: "Not a valid Email" }) : setErrors({ ...errors, [n]: "" })
+        }
+        else if (n === "mobile") {
+            !regMobile.test(v) ? setErrors({ ...errors, [n]: "Not a valid Mobile" }) : setErrors({ ...errors, [n]: "" })
+        }
+        else if (n === "password" || n === "confirm_password") {
+            !regExpPass.test(v) ? setErrors({ ...errors, [n]: "Not a valid Password" }) : setErrors({ ...errors, [n]: "" })
+        }
+        else if (n === "gender") {
+            setErrors({ ...errors, [n]: "" })
+        }
+        if (errors.submit.length != 0) { setErrors({ ...errors, submit: '' }) }
+        setData({ ...data, [n]: v })
+    }
+
+    const register = () => {
+        let tmp = Object.keys(errors)
+        tmp.pop()
+        let count = tmp.reduce((sum, ele) => sum + errors[ele].length, 0)
+        if (count === 0) {
+            let t = Object.keys(data)
+            let count2 = t.reduce((sum, ele) => { if (data[ele].length === 0) { console.log(ele); return sum + 1 } return sum }, 0)
+            if (count2 === 0) {
+                let send = data
+                delete send.confirm_password
+                axios.post("http://localhost:9999/registration", send)
+                    .then(res => {
+                        switch (res.data.err) {
+                            case 0: navigate("/login")
+                                break;
+                            case 1: console.log(res.data.msg)
+                                break;
+                            case 2: console.log(res.data.msg)
+                                break;
+                        }
+                    })
+                    .catch(err => {
+                        alert("error connecting registering user please try again later.")
+                    })
+            }
+            else if (count2 != 0) {
+                setErrors({ ...errors, submit: 'Some fields are empty' })
+            }
+        }
+        else if (count != 0) {
+            setErrors({ ...errors, submit: 'Some fields are empty' })
+        }
     }
 
     return (
@@ -75,8 +136,9 @@ export default function Registeration() {
                     <input type='radio' value="Male" name="gender" onChange={handler} /><label>Male</label>
                     <input type='radio' value="Female" name="gender" onChange={handler} /><label>Female</label>
                 </Form.Group>
-                <p style={{ styled }}>{errors.gender}</p>
-                <Button>Register</Button>
+                <p style={styled}>{errors.gender}</p>
+                <Button onClick={() => register()}>Register</Button>
+                <p style={styled}>{errors.submit}</p>
             </Form>
         </Container>
     )
