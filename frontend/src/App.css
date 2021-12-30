@@ -37,24 +37,50 @@
   }
 }
 
+label{
+margin:auto 10px auto 5px;
+}
+
 .loginpage{
   display: flex;
+  padding:5px;
+}
+
+.loginpage>hr{
+  width: 5px; 
+  height: 50vh;
 }
 
 .loginpage>div{
   width: 100%;
+  padding:0 20px;
 }
 
 .login{
-  display: flex;
+  display: flex;  
+  flex-direction: column;
+  align-items: center;
   height:auto;
-  padding-Left:20px;
-  justify-content: flex-start;
-  background-color:red;
+  justify-content: center;  
 }
 
-.login>Form{
-  height:50%;
+
+.login>Form ,.registration{
+  width: 100%;
+  padding:20px;
+  margin-top:20px;
+  background: rgba( 250, 250, 250, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.registration{
+  width:60vw;
+  margin:20px auto;
+}
+
+.login>Form>*,.registration>*{
+  margin:20px 0px;
 }
 
 .socialLogin{
@@ -76,12 +102,14 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   word-break: break-all;
   overflow: hidden;
-  border-radius: 5px;  
+  border-radius: 5px;
+  transition: transform 0.3s,opacity 0.3s;
 }
 
 .socialLogin>div:hover{
   cursor:pointer;
-  transform: scale(1.03) ;
+  transform:scale(1.03);
+  opacity:0.8;
 }
 
 .customneofooter{
@@ -103,7 +131,35 @@
   padding-left: 0
 }
 
+.iconlogin{
+  font-size: x-large;
+  right: 5px;
+  top: 6px;
+  position:absolute;
+  z-index: 3;
+}
+
+
+.navbar-light .navbar-toggler{
+  background-color: white;
+}
+
 @media screen and (max-width: 480px) {
+
+  .loginpage{
+    flex-direction: column-reverse;
+  }
+  
+.loginpage>hr{
+  width: 100vw; 
+  height: 5px;
+}
+.socialLogin>div{
+width:60vw;
+height:10vh;
+margin:5px auto;
+}
+
   .customneofooter{
     flex-direction: column-reverse;
     justify-content: center;
@@ -113,10 +169,6 @@
     margin:10px 0;
     width:100%;
     border-bottom: 2px solid grey;
-  }
-
-  .customneofooter>div:first-child{
-    margin-bottom: 0;
   }
 
 }

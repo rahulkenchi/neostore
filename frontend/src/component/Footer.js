@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Form, FormControl } from 'react-bootstrap'
 export default function Footer() {
-    return (
+    return (<>
         <div className="customneofooter">
             <div>
                 <h3>About Company</h3>
@@ -21,6 +21,7 @@ export default function Footer() {
                     <li>Contact Us</li>
                     <li>Privacy Policy</li>
                     <li>Locate Us</li>
+                    <li><a href="mailto: rahulskenchi0@gmail.com?subject = Feedback&body = Message">Send Email</a></li>
                 </ul>
             </div>
             <div>
@@ -42,5 +43,7 @@ export default function Footer() {
                 </ul>
             </div>
         </div>
+        <p style={{ backgroundColor: 'black', color: 'white', textAlign: 'center', wordBreak: 'break-word', margin: '0', borderBottom: '3px solid grey', paddingBottom: '15px' }}>Copyright 2017 NeoSOFT Technologies All rights reserved | Design By Rahul Kenchi</p>
+    </>
     )
 }
