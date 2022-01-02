@@ -2,9 +2,12 @@ const PORT = 9999
 const db = "mongodb://localhost:27017/neostore"
 const userSchema = require('./models/userSchema')
 const bcrypt = require('bcrypt')
+const CryptoJS = require('crypto-js')
 const saltRounds = 10
+const salt = bcrypt.genSaltSync(saltRounds)
 const jwt = require('jsonwebtoken')
 const jwtSecret = "randomtext"
+const encryptSecret = "randomtext"
 const mongoose = require('mongoose')
 const cors = require('cors')
 const express = require('express')
@@ -43,10 +46,14 @@ connectDB()
 
 
 app.post("/login", (req, res) => {
-    userSchema.findOne({ email: req.body.email }, (err, data) => {
+    let bytes = CryptoJS.AES.decrypt(req.body.data, encryptSecret);
+    let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+    console.log(decryptedData)
+    userSchema.findOne({ email: decryptedData.email }, (err, data) => {
         if (err) throw err;
         else if (data != null) {
-            let bool = bcrypt.compareSync(req.body.password, data.password)
+            const bool = bcrypt.compareSync(decryptedData.password, data.password)
+            console.log(decryptedData.password, data.password)
             if (bool) {
                 let payload = {
                     firstname: data.firstname,
@@ -69,14 +76,16 @@ app.post("/login", (req, res) => {
 })
 
 app.post("/registration", (req, res) => {
-    userSchema.findOne({ email: req.body.email }, (err, data) => {
+    let bytes = CryptoJS.AES.decrypt(req.body.data, encryptSecret);
+    let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+
+    userSchema.findOne({ email: decryptedData.email }, (err, data) => {
         if (err) throw err;
         else if (data != null) {
             res.json({ err: 1, msg: "User already exists" })
         }
         else {
-            let body = req.body
-            const salt = bcrypt.genSaltSync(saltRounds)
+            let body = decryptedData
             const hash = bcrypt.hashSync(body.password, salt)
             body.password = hash
             let tmp = new userSchema(body)
@@ -97,13 +106,13 @@ app.listen(PORT, (err) => { if (err) throw err; console.log(`Working on PORT ${P
 
 
 //code to test token generation and authentication
-// app.get("/", (req, res) => {
-//     let payload = {
-//         email: "random"
-//     }
-//     const token = jwt.sign(payload, jwtSecret, { expiresIn: 3600000 })
-//     res.json({ "err": 0, "msg": "Login Success", "token": token })
-// })
+app.get("/", (req, res) => {
+    let payload = {
+        enpstd: encryptSecret
+    }
+    const token = jwt.sign(payload, jwtSecret, { expiresIn: 3600000 })
+    res.json({ "err": 0, "msg": "Login Success", "token": token })
+})
 
 // app.get("/g", authenticationToken, (req, res) => {
 //     res.json({ err: 0 })

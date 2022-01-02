@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import jwt_decode from 'jwt-decode'
+import { AES } from 'crypto-js'
 import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
@@ -7,7 +9,7 @@ import { MdPhone, MdInfo } from 'react-icons/md'
 import { Container, Form, FormControl, InputGroup, Button } from 'react-bootstrap'
 const regExpName = new RegExp(/^[a-zA-Z]{2,20}$/)
 const regExpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-const regExpPass = new RegExp(/^[a-zA-Z]{8,20}$/)
+const regExpPass = new RegExp(/^[a-zA-Z0-9]{8,20}$/)
 const regMobile = new RegExp(/^[987][0-9]{9}$/)
 
 const styled = {
@@ -21,6 +23,19 @@ export default function Registeration() {
     const [showconfirmpassword, setShowConfirmPassword] = useState(false)
     const [data, setData] = useState({ firstname: '', lastname: '', email: '', password: '', confirm_password: ' ', mobile: '', gender: '' })
     const [errors, setErrors] = useState({ firstname: '', lastname: '', email: '', password: '', confirm_password: '', mobile: '', gender: 'not selected', submit: '' })
+
+    useEffect(() => {
+        axios.get("http://localhost:9999/")
+            .then(res => {
+                if (res.data.err === 0) {
+                    sessionStorage.setItem('enpstd', res.data.token)
+                }
+            })
+        return () => {
+            sessionStorage.removeItem('enpstd')
+        }
+    }, [])
+
 
     function handler(e) {
         let n = e.target.name
@@ -50,18 +65,21 @@ export default function Registeration() {
         let count = tmp.reduce((sum, ele) => sum + errors[ele].length, 0)
         if (count === 0) {
             let t = Object.keys(data)
-            let count2 = t.reduce((sum, ele) => { if (data[ele].length === 0) { console.log(ele); return sum + 1 } return sum }, 0)
+            let count2 = t.reduce((sum, ele) => { if (data[ele].length === 0) { return sum + 1 } return sum }, 0)
             if (count2 === 0) {
-                let send = data
-                delete send.confirm_password
-                axios.post("http://localhost:9999/registration", send)
+                let tmp2 = data
+                delete tmp2.confirm_password
+                let tmp3 = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
+                let send = AES.encrypt(JSON.stringify(tmp2), tmp3).toString();
+                axios.post("http://localhost:9999/registration", { data: send })
                     .then(res => {
+                        console.log(res.data.msg, '1');
                         switch (res.data.err) {
                             case 0: navigate("/login")
                                 break;
-                            case 1: console.log(res.data.msg)
+                            case 1: setErrors({ ...errors, submit: res.data.msg })
                                 break;
-                            case 2: console.log(res.data.msg)
+                            case 2: setErrors({ ...errors, submit: res.data.msg })
                                 break;
                         }
                     })
@@ -112,7 +130,7 @@ export default function Registeration() {
                             <BsEyeSlashFill className="iconlogin" onClick={() => setShowPassword(true)} />
                         }
                     </InputGroup>
-                    <p style={styled}>{errors.password}</p>
+                    <p style={styled}>{errors.password}<span style={{ color: 'black' }}>8-12 Alphanumeric characters</span></p>
                 </Form.Group>
                 <Form.Group>
                     <InputGroup>
@@ -123,14 +141,14 @@ export default function Registeration() {
                             <BsEyeSlashFill className="iconlogin" onClick={() => setShowConfirmPassword(true)} />
                         }
                     </InputGroup>
-                    <p style={styled}>{errors.confirm_password}</p>
+                    <p style={styled}>{errors.confirm_password}<span style={{ color: 'black' }}>8-12 Alphanumeric characters</span></p>
                 </Form.Group>
                 <Form.Group>
                     <InputGroup>
                         <FormControl type="text" placeholder="Mobile No." name="mobile" onChange={handler} />
                         <MdPhone className="iconlogin" />
                     </InputGroup>
-                    <p style={styled}>{errors.mobile}</p>
+                    <p style={styled}><span style={{ color: 'black' }}>Max 10</span>{errors.mobile}<span style={{ color: 'black' }}>{errors.mobile.length}/10</span></p>
                 </Form.Group>
                 <Form.Group>
                     <input type='radio' value="Male" name="gender" onChange={handler} /><label>Male</label>

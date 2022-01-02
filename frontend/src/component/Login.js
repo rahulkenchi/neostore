@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import jwt_decode from 'jwt-decode'
+import CryptoJS from 'crypto-js'
 import { IoMdMail } from 'react-icons/io'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
 import { Form, FormControl, Button, InputGroup } from 'react-bootstrap'
@@ -7,6 +9,18 @@ export default function Login() {
     const [data, setData] = useState({ email: '', password: '' })
     const [errors, setErrors] = useState({ email: '', password: '', submit: '' })
     const [showpassword, setShowPassword] = useState(false)
+
+    useEffect(() => {
+        axios.get("http://localhost:9999/")
+            .then(res => {
+                if (res.data.err === 0) {
+                    sessionStorage.setItem('enpstd', res.data.token)
+                }
+            })
+        return () => {
+            sessionStorage.removeItem('enpstd')
+        }
+    }, [])
 
     function handler(e) {
         let n = e.target.name
@@ -16,7 +30,10 @@ export default function Login() {
     }
 
     const login = () => {
-        axios.post("http://localhost:9999/login", data)
+        let tmp = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
+        let send = CryptoJS.AES.encrypt(JSON.stringify(data), tmp).toString()
+        console.log(send)
+        axios.post("http://localhost:9999/login", { data: send })
             .then(res => {
                 switch (res.data.err) {
                     case 0: console.log("OK LOGGED")
@@ -50,7 +67,7 @@ export default function Login() {
                     </Form.Group>
                     <Form.Group>
                         <InputGroup>
-                            <FormControl name="password" placeholder="Password" type={showpassword ? "text" : "password"} onClick={handler} />
+                            <FormControl name="password" placeholder="Password" type={showpassword ? "text" : "password"} onChange={handler} />
                             {showpassword ?
                                 <BsEyeFill className="iconlogin" onClick={() => setShowPassword(false)} />
                                 :
