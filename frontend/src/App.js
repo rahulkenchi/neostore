@@ -5,19 +5,23 @@ import Footer from './component/Footer';
 import NavigationBar from './component/NavigationBar';
 import Login from './component/Login';
 import Registeration from './component/Registeration';
+import RecoverPassword from './component/RecoverPassword';
+import Product from './component/Product';
+import ChangePassword from './component/ChangePassword';
 function App() {
 
   return (
-    <>
-      <BrowserRouter>
-        <NavigationBar />
-        <Routes>
-          <Route path="/" element={<Registeration />}></Route>
-          <Route path="/login" element={<Login />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <NavigationBar />
+      <Routes>
+        <Route path="/" element={<Registeration />}></Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/recoverpassword" element={<RecoverPassword />} />
+        <Route path="/product" element={<Product />} />
+        <Route path="/changepassword" element={<ChangePassword />} />
+      </Routes>
+      <Footer />
+    </BrowserRouter>
   );
 }
 

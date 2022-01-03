@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import SocialLogin from './SocialLogin'
 import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import { AES } from 'crypto-js'
@@ -11,7 +12,6 @@ const regExpName = new RegExp(/^[a-zA-Z]{2,20}$/)
 const regExpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
 const regExpPass = new RegExp(/^[a-zA-Z0-9]{8,20}$/)
 const regMobile = new RegExp(/^[987][0-9]{9}$/)
-
 const styled = {
     margin: 0,
     fontSize: 'small',
@@ -96,9 +96,44 @@ export default function Registeration() {
         }
     }
 
+    const handleSocialLogin = (user) => {
+        console.log(user);
+        let a = {
+            firstname: user._profile.firstName,
+            lastname: user._profile.lastName,
+            email: user._profile.email,
+            profilepic: user._profile.profilePicURL,
+            token: user._token.accessToken
+        }
+    };
+
+    const handleSocialLoginFailure = (err) => {
+        console.error(err);
+    };
+
     return (
         <Container>
             <Form className="registration" >
+                <div className="d-flex justify-content-center">
+                    <SocialLogin
+                        style={{ backgroundColor: '#4267B2', width: '20vw' }}
+                        className="facebook"
+                        provider="facebook"
+                        appId="530980681768179"
+                        onLoginSuccess={handleSocialLogin}
+                        onLoginFailure={handleSocialLoginFailure}>
+                        Login with Facebook
+                    </SocialLogin>
+                    <SocialLogin
+                        style={{ backgroundColor: '#DB4437', width: '20vw' }}
+                        className="google"
+                        provider="google"
+                        appId="443267988237-4lch3ldhcbf9150nm7urethq8kaicd9o.apps.googleusercontent.com"
+                        onLoginSuccess={handleSocialLogin}
+                        onLoginFailure={handleSocialLoginFailure}>
+                        Login with Google
+                    </SocialLogin>
+                </div>
                 <h3>Register to NeoSTORE</h3>
                 <Form.Group>
                     <InputGroup>
@@ -151,8 +186,8 @@ export default function Registeration() {
                     <p style={styled}><span style={{ color: 'black' }}>Max 10</span>{errors.mobile}<span style={{ color: 'black' }}>{errors.mobile.length}/10</span></p>
                 </Form.Group>
                 <Form.Group>
-                    <input type='radio' value="Male" name="gender" onChange={handler} /><label>Male</label>
-                    <input type='radio' value="Female" name="gender" onChange={handler} /><label>Female</label>
+                    <input type='radio' value="Male" id="gender1" name="gender" onChange={handler} /><label for="gender1">Male</label>
+                    <input type='radio' value="Female" id="gender2" name="gender" onChange={handler} /><label for="gender2">Female</label>
                 </Form.Group>
                 <p style={styled}>{errors.gender}</p>
                 <Button onClick={() => register()}>Register</Button>

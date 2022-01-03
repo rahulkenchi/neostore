@@ -5,6 +5,11 @@ import CryptoJS from 'crypto-js'
 import { IoMdMail } from 'react-icons/io'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
 import { Form, FormControl, Button, InputGroup } from 'react-bootstrap'
+const styled = {
+    margin: 0,
+    fontSize: 'small',
+    color: 'red'
+}
 export default function Login() {
     const [data, setData] = useState({ email: '', password: '' })
     const [errors, setErrors] = useState({ email: '', password: '', submit: '' })
@@ -35,12 +40,16 @@ export default function Login() {
         console.log(send)
         axios.post("http://localhost:9999/login", { data: send })
             .then(res => {
+                console.log(res.data)
                 switch (res.data.err) {
-                    case 0: console.log("OK LOGGED")
+                    case 0: {
+                        setErrors({ ...errors, email: '', password: '' });
+                        sessionStorage.setItem('_token', res.data.token)
+                    }
                         break;
-                    case 1: console.log(res.data.msg)
+                    case 1: setErrors({ ...errors, email: '', password: res.data.msg })
                         break;
-                    case 2: console.log(res.data.msg)
+                    case 2: setErrors({ ...errors, email: res.data.msg, password: '' })
                         break;
                 }
             })
@@ -64,6 +73,7 @@ export default function Login() {
                             <FormControl type="email" placeholder="Email Address" name="email" onChange={handler} />
                             <IoMdMail className="iconlogin" />
                         </InputGroup>
+                        <p style={styled}>{errors.email}</p>
                     </Form.Group>
                     <Form.Group>
                         <InputGroup>
@@ -74,8 +84,10 @@ export default function Login() {
                                 <BsEyeSlashFill className="iconlogin" onClick={() => setShowPassword(true)} />
                             }
                         </InputGroup>
+                        <p style={styled}>{errors.password}</p>
                     </Form.Group>
                     <Button onClick={() => login()}>Login</Button>
+                    <p style={styled}>{errors.submit}</p>
                 </Form>
                 <p style={{ alignSelf: 'end', width: '100%', textAlign: 'start' }}>Forgot Password ?</p>
             </div>

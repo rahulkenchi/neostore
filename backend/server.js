@@ -4,7 +4,6 @@ const userSchema = require('./models/userSchema')
 const bcrypt = require('bcrypt')
 const CryptoJS = require('crypto-js')
 const saltRounds = 10
-const salt = bcrypt.genSaltSync(saltRounds)
 const jwt = require('jsonwebtoken')
 const jwtSecret = "randomtext"
 const encryptSecret = "randomtext"
@@ -48,12 +47,11 @@ connectDB()
 app.post("/login", (req, res) => {
     let bytes = CryptoJS.AES.decrypt(req.body.data, encryptSecret);
     let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-    console.log(decryptedData)
+    // console.log(decryptedData)
     userSchema.findOne({ email: decryptedData.email }, (err, data) => {
         if (err) throw err;
         else if (data != null) {
             const bool = bcrypt.compareSync(decryptedData.password, data.password)
-            console.log(decryptedData.password, data.password)
             if (bool) {
                 let payload = {
                     firstname: data.firstname,
@@ -78,7 +76,6 @@ app.post("/login", (req, res) => {
 app.post("/registration", (req, res) => {
     let bytes = CryptoJS.AES.decrypt(req.body.data, encryptSecret);
     let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-
     userSchema.findOne({ email: decryptedData.email }, (err, data) => {
         if (err) throw err;
         else if (data != null) {
@@ -86,6 +83,7 @@ app.post("/registration", (req, res) => {
         }
         else {
             let body = decryptedData
+            const salt = bcrypt.genSaltSync(saltRounds)
             const hash = bcrypt.hashSync(body.password, salt)
             body.password = hash
             let tmp = new userSchema(body)
@@ -99,6 +97,52 @@ app.post("/registration", (req, res) => {
             })
         }
     })
+})
+
+app.post("/changepassword", (req, res) => {
+    let bytes = CryptoJS.AES.decrypt(req.body.data, encryptSecret);
+    let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+    console.log(decryptedData)
+    // userSchema.findOne({ email: decryptedData.email }, (err, data) => {
+    //     if (err) throw err;
+    //     else if (data != null) {
+    //         const salt = bcrypt.genSaltSync(saltRounds)
+    //         const hash = bcrypt.hashSync(decryptedData.password, salt)
+    //         userSchema.updateOne({ email: data.email }, { $set: { password: hash } }, (err) => {
+    //             if (err) throw err;
+    //             else res.json({ err: 0 })
+    //         })
+    //     }
+    // })
+    res.end()
+})
+
+app.post("/recoverpassword", (req, res) => {
+    let bytes = CryptoJS.AES.decrypt(req.body.data, encryptSecret);
+    let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+    //implement otp verification
+    console.log(decryptedData)
+    // userSchema.findOne({ email: decryptedData.email }, (err, data) => {
+    //     if (err) throw err;
+    //     else if (data != null) {
+    //         const salt = bcrypt.genSaltSync(saltRounds)
+    //         const hash = bcrypt.hashSync(decryptedData.password, salt)
+    //         userSchema.updateOne({ email: data.email }, { $set: { password: hash } }, (err) => {
+    //             if (err) throw err;
+    //             else res.json({ err: 0 })
+    //         })
+    //     }
+    // })
+    res.end()
+})
+
+app.get("/sentotp", (req, res) => {
+    //sent otp also , not implemented yet
+    let payload = {
+        enpstd: encryptSecret
+    }
+    const token = jwt.sign(payload, jwtSecret, { expiresIn: 3600000 })
+    res.json({ err: 0, "token": token })
 })
 
 app.listen(PORT, (err) => { if (err) throw err; console.log(`Working on PORT ${PORT}`) })
