@@ -75,7 +75,7 @@ margin:auto 10px auto 5px;
 
 
 .login>Form ,.registration{
-  width: 100%;
+  width: 100%;  
   padding:20px;
   margin-top:20px;
   background: rgba( 250, 250, 250, 0.8);
@@ -170,6 +170,35 @@ margin:auto 10px auto 5px;
   width:75%
 }
 
+.myaccountmain{
+  display: flex;
+  justify-content: space-around;
+}
+
+.myaccountmaindiv1{
+  width:'25%'
+}
+
+.myaccountmaindiv2{
+  width:'70%'
+}
+
+.myaccountsidebar>button{
+  color:blue;
+  text-align: center;
+  border-radius: 5px;
+  padding:5px 5px;
+  margin:7px 0px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+  transition:box-shadow 0.4s ;
+}
+
+.myaccountsidebar>button:hover{
+cursor: pointer;
+color:blue;
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),0 8px 10px 0 rgba(0, 0, 0, 0.10);
+}
+
 
 @media screen and (max-width: 500px) {
 
@@ -208,5 +237,17 @@ margin:5px auto;
   
   .productdiv2{
     width:100%
+  }
+
+  .myaccountmain{
+    flex-direction: column;
+  }
+
+  .myaccountmaindiv1{
+    width:'90%'
+  }
+  
+  .myaccountmaindiv2{
+    width:'90%'
   }
 }

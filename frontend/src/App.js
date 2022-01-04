@@ -8,6 +8,7 @@ import Registeration from './component/Registeration';
 import RecoverPassword from './component/RecoverPassword';
 import Product from './component/Product';
 import ChangePassword from './component/ChangePassword';
+import MyAccount from './component/MyAccount';
 function App() {
 
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/recoverpassword" element={<RecoverPassword />} />
           <Route path="/product" element={<Product />} />
           <Route path="/changepassword" element={<ChangePassword />} />
+          <Route path="/myaccount" element={<MyAccount />} />
           {/* <Route path="*" element={<ChangePassword />} /> */}
         </Routes>
         <Footer />

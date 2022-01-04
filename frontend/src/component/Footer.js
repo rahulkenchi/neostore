@@ -8,7 +8,7 @@ export default function Footer() {
             <div>
                 <h3>About Company</h3>
                 <ul>
-                    <li><p>Neosoft Technologies is here at your quick and easy<br />for shopping.</p></li>
+                    <li><p>Neosoft Technologies is here at your quick and easy for shopping.</p></li>
                     <li>Contact information</li>
                     <li>Email: contact@neosoftmail.com</li>
                     <li>Phone: +91 0000000000</li>
