@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
 import { MdPhone, MdInfo } from 'react-icons/md'
+import { ImFacebook, ImGoogle } from 'react-icons/im'
 import { Container, Form, FormControl, InputGroup, Button } from 'react-bootstrap'
 const regExpName = new RegExp(/^[a-zA-Z]{2,20}$/)
 const regExpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
@@ -116,24 +117,25 @@ export default function Registeration() {
             <Form className="registration" >
                 <div className="d-flex justify-content-center">
                     <SocialLogin
-                        style={{ backgroundColor: '#4267B2', width: '20vw' }}
+                        style={{ backgroundColor: '#4267B2' }}
                         className="facebook"
                         provider="facebook"
                         appId="530980681768179"
                         onLoginSuccess={handleSocialLogin}
                         onLoginFailure={handleSocialLoginFailure}>
-                        Login with Facebook
+                        <ImFacebook style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Facebook
                     </SocialLogin>
                     <SocialLogin
-                        style={{ backgroundColor: '#DB4437', width: '20vw' }}
+                        style={{ backgroundColor: '#DB4437' }}
                         className="google"
                         provider="google"
                         appId="443267988237-4lch3ldhcbf9150nm7urethq8kaicd9o.apps.googleusercontent.com"
                         onLoginSuccess={handleSocialLogin}
                         onLoginFailure={handleSocialLoginFailure}>
-                        Login with Google
+                        <ImGoogle style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Google
                     </SocialLogin>
                 </div>
+                <hr />
                 <h3>Register to NeoSTORE</h3>
                 <Form.Group>
                     <InputGroup>

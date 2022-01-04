@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, Form, FormControl } from 'react-bootstrap'
+const regExpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
 export default function Footer() {
+    const [email, setEmail] = useState('')
     return (<>
         <div className="customneofooter">
             <div>
@@ -16,12 +18,11 @@ export default function Footer() {
             <div>
                 <h3>information</h3>
                 <ul >
-                    <li>Terms and Conditions</li>
-                    <li>Gurantee and Return Policy</li>
-                    <li>Contact Us</li>
-                    <li>Privacy Policy</li>
-                    <li>Locate Us</li>
-                    <li><a href="mailto: rahulskenchi0@gmail.com?subject = Feedback&body = Message">Send Email</a></li>
+                    <li><span><a href="terms.pdf" target="_blank">Terms and Conditions</a></span></li>
+                    <li><span>Gurantee and Return Policy</span></li>
+                    <li><span>Contact Us</span></li>
+                    <li><span>Privacy Policy</span></li>
+                    <li><span>Locate Us</span></li>
                 </ul>
             </div>
             <div>
@@ -36,10 +37,13 @@ export default function Footer() {
                                 placeholder="your email..."
                                 className="me-2 ms-2"
                                 aria-label="your email..."
+                                onChange={(e) => setEmail(e.target.value)}
                             />
-                        </Form></li>
+                        </Form>
+                        <p className="text-danger">{email.length != 0 ? (!regExpEmail.test(email) ? "Invalid email" : "") : ""}</p>
+                    </li>
                     <br />
-                    <li><Button variant="light">Subscribe</Button></li>
+                    <li><Button variant="light" onClick={() => email.length != 0 ? (!regExpEmail.test(email) ? "" : "") : ""}>Subscribe</Button></li>
                 </ul>
             </div>
         </div>

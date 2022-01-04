@@ -11,17 +11,20 @@ import ChangePassword from './component/ChangePassword';
 function App() {
 
   return (
-    <BrowserRouter>
-      <NavigationBar />
-      <Routes>
-        <Route path="/" element={<Registeration />}></Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/recoverpassword" element={<RecoverPassword />} />
-        <Route path="/product" element={<Product />} />
-        <Route path="/changepassword" element={<ChangePassword />} />
-      </Routes>
-      <Footer />
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <NavigationBar />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Registeration />} />
+          <Route path="/recoverpassword" element={<RecoverPassword />} />
+          <Route path="/product" element={<Product />} />
+          <Route path="/changepassword" element={<ChangePassword />} />
+          {/* <Route path="*" element={<ChangePassword />} /> */}
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </>
   );
 }
 

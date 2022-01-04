@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import CryptoJS from 'crypto-js'
+import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
+import { ImFacebook, ImGoogle, ImTwitter } from 'react-icons/im'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
 import { Form, FormControl, Button, InputGroup } from 'react-bootstrap'
 const styled = {
@@ -11,6 +13,7 @@ const styled = {
     color: 'red'
 }
 export default function Login() {
+    const navigate = useNavigate()
     const [data, setData] = useState({ email: '', password: '' })
     const [errors, setErrors] = useState({ email: '', password: '', submit: '' })
     const [showpassword, setShowPassword] = useState(false)
@@ -59,10 +62,10 @@ export default function Login() {
     return (
         <div className="loginpage" >
             <div className='socialLogin'>
-                <div style={{ backgroundColor: '#4267B2' }}>Login with Facebook</div>
-                <div style={{ backgroundColor: '#DB4437' }}>Login with Google</div>
-                <div style={{ backgroundColor: '#1DA1F2' }}>Login with Twitter</div>
-                <p style={{ alignSelf: 'end', width: '100%', textAlign: 'end' }}>Register Now</p>
+                <div style={{ backgroundColor: '#4267B2' }}><ImFacebook style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Facebook</div>
+                <div style={{ backgroundColor: '#DB4437' }}><ImGoogle style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Google</div>
+                <div style={{ backgroundColor: '#1DA1F2' }}><ImTwitter style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Twitter</div>
+                <p className="w-100 text-end"><span style={{ cursor: 'pointer' }} onClick={() => navigate("/register")}>Register Now</span></p>
             </div>
             <hr />
             <div className="login">
@@ -89,7 +92,7 @@ export default function Login() {
                     <Button onClick={() => login()}>Login</Button>
                     <p style={styled}>{errors.submit}</p>
                 </Form>
-                <p style={{ alignSelf: 'end', width: '100%', textAlign: 'start' }}>Forgot Password ?</p>
+                <p className='w-100 text-start'><span style={{ cursor: 'pointer' }} onClick={() => navigate("/recoverpassword")}>Forgot Password ?</span></p>
             </div>
         </div >
     )

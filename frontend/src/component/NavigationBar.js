@@ -17,21 +17,21 @@ export default function NavigationBar() {
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link href="#action1" style={{ color: 'white' }}>Home</Nav.Link>
+                        <Nav.Link href="#action1" className="text-white">Home</Nav.Link>
                     </Nav>
                     <Nav
                         className="me-auto my-2 my-lg-0"
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link href="#action1" style={{ color: 'white' }}>Products   </Nav.Link>
+                        <Nav.Link href="#action1" className="text-white">Products</Nav.Link>
                     </Nav>
                     <Nav
                         className="me-auto my-2 my-lg-0"
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link href="#action1" style={{ color: 'white' }}>Order</Nav.Link>
+                        <Nav.Link href="#action1" className="text-white">Order</Nav.Link>
                     </Nav>
                     <Form className="d-flex">
                         <FormControl
@@ -46,7 +46,12 @@ export default function NavigationBar() {
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <div style={{ backgroundColor: 'white', width: '70px', height: '40px', borderRadius: '5px', padding: '0', verticalAlign: 'center', justifyContent: 'center' }}><p style={{ padding: '5px', margin: '0' }}><FaShoppingCart style={{ fontSize: 'large' }} />&nbsp; Cart</p></div>
+                        <div style={{ backgroundColor: 'white', width: '70px', height: '40px', borderRadius: '5px' }}>
+                            <p className="d-flex justify-content-center align-items-center h-100 m-0" >
+                                <FaShoppingCart style={{ fontSize: 'large' }} />
+                                <span style={{ position: 'relative', bottom: '10px', borderRadius: '50%', fontWeight: 'bold', fontSize: 'small', backgroundColor: '#ff1656', color: 'white', padding: '0px 2px' }}>01</span>
+                                Cart</p>
+                        </div>
                     </Nav>
                     <NavDropdown title={<MdAccountBox style={{ backgroundColor: 'white', color: 'black', width: '30px', height: '27px' }} />} id="navbarScrollingDropdown" style={{ marginRight: '7vw', width: '70px', height: '40px', backgroundColor: "white", borderRadius: '5px' }}>
                         <NavDropdown.Item >My Account</NavDropdown.Item>
