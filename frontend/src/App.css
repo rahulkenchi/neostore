@@ -199,7 +199,10 @@ color:blue;
 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),0 8px 10px 0 rgba(0, 0, 0, 0.10);
 }
 
-
+.dropdown-menu.show{
+  max-height: 250px;
+  overflow: auto;
+}
 @media screen and (max-width: 500px) {
 
   .loginpage{
@@ -250,4 +253,5 @@ margin:5px auto;
   .myaccountmaindiv2{
     width:'90%'
   }
+ 
 }

@@ -1,8 +1,20 @@
 import React, { useState } from 'react'
+import axios from 'axios'
 import { Button, Form, FormControl } from 'react-bootstrap'
 const regExpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
 export default function Footer() {
     const [email, setEmail] = useState('')
+    const subscribe = () => {
+        axios.post("http://localhost:9999/subscribe", { email: email })
+            .then(res => {
+                if (res.data.err != 0) {
+                    alert(res.data.msg)
+                }
+                else {
+                    setEmail('')
+                }
+            })
+    }
     return (<>
         <div className="customneofooter">
             <div>
@@ -43,7 +55,7 @@ export default function Footer() {
                         <p className="text-danger">{email.length != 0 ? (!regExpEmail.test(email) ? "Invalid email" : "") : ""}</p>
                     </li>
                     <br />
-                    <li><Button variant="light" onClick={() => email.length != 0 ? (!regExpEmail.test(email) ? "" : "") : ""}>Subscribe</Button></li>
+                    <li><Button variant="light" onClick={() => email.length != 0 ? (!regExpEmail.test(email) ? "" : subscribe()) : ""}>Subscribe</Button></li>
                 </ul>
             </div>
         </div>

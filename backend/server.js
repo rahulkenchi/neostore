@@ -2,6 +2,7 @@ const PORT = 9999
 const db = "mongodb://localhost:27017/neostore"
 const userSchema = require('./models/userSchema')
 const productSchema = require('./models/productSchema')
+const subscribeSchema = require('./models/subscribeSchema')
 const bcrypt = require('bcrypt')
 const CryptoJS = require('crypto-js')
 const saltRounds = 10
@@ -137,13 +138,48 @@ app.post("/recoverpassword", (req, res) => {
     res.end()
 })
 
+app.post("/subscribe", (req, res) => {
+    let tmp = new subscribeSchema({ email: req.body.email })
+    tmp.save((err) => { if (err) { res.json({ err: 0 }) } else { res.json({ err: 1 }) } })
+})
+
 app.get("/sentotp", (req, res) => {
-    //sent otp also , not implemented yet
-    let payload = {
-        enpstd: encryptSecret
+    const nodemailer = require("nodemailer");
+    async function main() {
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            secure: false,
+            auth: {
+                user: 'nstcoders@gmail.com', // generated ethereal user
+                pass: 'nstcoders1234', // generated ethereal password
+            },
+        });
+        let info = await transporter.sendMail({
+            from: 'nstcoders@gmail.com', // sender address
+            to: "rahulskenchi0@gmail.com", // list of receivers
+            subject: "Reset your NeoStore Password.", // Subject line
+            html: `<h3>Hello ${0} ,</h3>
+            <p>
+            Somebody requested a new password for your <span style="font-weight:bold;font-size:large">Neo<span style="color:red;">Store</span></span> account associated with ${'email'}.
+            No changes have been made to your account yet.
+            </p>
+            <p>
+            You can reset your password by using OTP <span style="font-weight:bold;font-size:large">${'123456'}</span>
+            </p>
+            <br/>
+            <p>
+            If you did not request a new password, please let us know immediately by replying to this email. <br/>           
+            Yours,<br/>
+            The NeoStore team
+            </p>`, // plain text body
+            // html body
+        });
+        console.log("Message sent: %s", info.messageId);
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     }
-    const token = jwt.sign(payload, jwtSecret, { expiresIn: 3600000 })
-    res.json({ err: 0, "token": token })
+
+    main().catch(console.error);
+    res.json({ err: 0 })
 })
 
 app.listen(PORT, (err) => { if (err) throw err; console.log(`Working on PORT ${PORT}`) })

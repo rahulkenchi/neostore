@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import CryptoJS from 'crypto-js'
+import SocialLogin from './SocialLogin'
 import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
 import { ImFacebook, ImGoogle, ImTwitter } from 'react-icons/im'
@@ -37,6 +38,21 @@ export default function Login() {
         console.log(data)
     }
 
+    const handleSocialLogin = (user) => {
+        console.log(user);
+        let a = {
+            firstname: user._profile.firstName,
+            lastname: user._profile.lastName,
+            email: user._profile.email,
+            profilepic: user._profile.profilePicURL,
+            token: user._token.accessToken
+        }
+    };
+
+    const handleSocialLoginFailure = (err) => {
+        console.error(err);
+    };
+
     const login = () => {
         let tmp = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
         let send = CryptoJS.AES.encrypt(JSON.stringify(data), tmp).toString()
@@ -62,11 +78,34 @@ export default function Login() {
     return (
         <div className="loginpage" >
             <div className='socialLogin'>
-                <div style={{ backgroundColor: '#4267B2' }}><ImFacebook style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Facebook</div>
-                <div style={{ backgroundColor: '#DB4437' }}><ImGoogle style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Google</div>
-                <div style={{ backgroundColor: '#1DA1F2' }}><ImTwitter style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Twitter</div>
+                <SocialLogin
+                    style={{ backgroundColor: '#4267B2', width: '30vw', height: '10vh' }}
+                    className="facebook"
+                    provider="facebook"
+                    appId="530980681768179"
+                    onLoginSuccess={handleSocialLogin}
+                    onLoginFailure={handleSocialLoginFailure}>
+                    <ImFacebook style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Facebook
+                </SocialLogin>
+                <SocialLogin
+                    style={{ backgroundColor: '#DB4437', width: '30vw', height: '10vh' }}
+                    className="google"
+                    provider="google"
+                    appId="443267988237-4lch3ldhcbf9150nm7urethq8kaicd9o.apps.googleusercontent.com"
+                    onLoginSuccess={handleSocialLogin}
+                    onLoginFailure={handleSocialLoginFailure}>
+                    <ImGoogle style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Google
+                </SocialLogin>
+                <SocialLogin
+                    style={{ backgroundColor: '#1DA1F2', width: '30vw', height: '10vh' }}
+                    className="google"
+                    provider="google"
+                    appId="443267988237-4lch3ldhcbf9150nm7urethq8kaicd9o.apps.googleusercontent.com"
+                    onLoginSuccess={handleSocialLogin}
+                    onLoginFailure={handleSocialLoginFailure}>
+                    <ImTwitter style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Twitter                    </SocialLogin>
                 <p className="w-100 text-end"><span style={{ cursor: 'pointer' }} onClick={() => navigate("/register")}>Register Now</span></p>
-            </div>
+            </div >
             <hr />
             <div className="login">
                 <Form>
