@@ -184,13 +184,14 @@ app.get("/sentotp", (req, res) => {
 
 app.listen(PORT, (err) => { if (err) throw err; console.log(`Working on PORT ${PORT}`) })
 
-// app.post("/", (req, res) => {
-//     let tmp = new productSchema({ color_id: "61cd7f3ed858b1bcd5f4cec0", category_id: "61cd94d111131eb1953574af" })
-//     tmp.save((err) => {
-//         if (err) throw err;
-//     })
-//     res.end()
-// })
+app.post("/", (req, res) => {
+    console.log(req.body, 'save is commented')
+    // let tmp = new productSchema(req.body)
+    // tmp.save((err) => {
+    //     if (err) throw err;
+    // })
+    res.end()
+})
 
 //code to test token generation and authentication
 // app.get("/", (req, res) => {

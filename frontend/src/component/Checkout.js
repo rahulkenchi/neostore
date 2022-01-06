@@ -1,6 +1,8 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Card } from 'react-bootstrap'
 export default function Checkout() {
+    const navigate = useNavigate()
     return (
         <div className='p-3' style={{ borderRadius: '10px', boxShadow: `0 4px 8px 0 rgba(0, 0, 0, 0.2)` }}>
             <h2 style={{ fontWeight: 'bolder' }}>Addresses</h2>
@@ -23,7 +25,7 @@ export default function Checkout() {
                 )
             }
             <hr /><br />
-            <p><Button variant="light" style={{ fontWeight: 'bold' }}>Add Address</Button></p>
+            <p><Button variant="light" onClick={() => navigate("/myaccount/addnewaddress")} style={{ fontWeight: 'bold' }} >Add Address</Button></p>
         </div>
     )
 }

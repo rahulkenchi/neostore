@@ -3,8 +3,13 @@ ul{
 }
 
 a{
-  text-decoration: none;
+  text-decoration: none;  
   color:inherit
+}
+
+
+.nav-link a:hover,.nav-link p:hover{
+  color:red
 }
 
 .App {

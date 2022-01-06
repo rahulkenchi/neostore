@@ -7,8 +7,8 @@ export default function Profile() {
         <div className='p-3' style={{ borderRadius: '10px', boxShadow: `0 4px 8px 0 rgba(0, 0, 0, 0.2)` }}>
             <h2>Profile</h2>
             <hr />
-            <table cellSpacing='10'>
-                <tbody>
+            <table >
+                <tbody >
                     <tr>
                         <td>First Name</td>
                         <td></td>

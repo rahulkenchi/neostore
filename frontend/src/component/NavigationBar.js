@@ -3,10 +3,16 @@ import { MdAccountBox } from 'react-icons/md'
 import { FaShoppingCart } from 'react-icons/fa'
 import { RiLogoutCircleRLine } from 'react-icons/ri'
 import { useNavigate, NavLink } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 import { Navbar, Container, Nav, Form, Button, FormControl, NavDropdown } from 'react-bootstrap'
 
 export default function NavigationBar() {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const cartcount = useSelector(state => state.cartReducer)
+    useEffect(() => {
+        dispatch({ type: 'INC' })
+    }, [])
     return (
         <Navbar bg="dark" expand="lg" >
             <Container fluid >
@@ -14,7 +20,7 @@ export default function NavigationBar() {
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
                     <Nav
-                        className="me-auto my-2 my-lg-0"
+                        className="me-auto my-2 my-lg-0 anchor"
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
@@ -50,7 +56,7 @@ export default function NavigationBar() {
                         <div style={{ backgroundColor: 'white', width: '70px', height: '40px', borderRadius: '5px' }}>
                             <NavLink to="/cart"><p className="d-flex justify-content-center align-items-center h-100 m-0"  >
                                 <FaShoppingCart style={{ fontSize: 'large' }} />
-                                <span style={{ position: 'relative', bottom: '10px', borderRadius: '50%', fontWeight: 'bold', fontSize: 'small', backgroundColor: '#ff1656', color: 'white', padding: '0px 2px' }}>01</span>
+                                <span style={{ position: 'relative', bottom: '10px', borderRadius: '50%', fontWeight: 'bold', fontSize: 'small', backgroundColor: '#ff1656', color: 'white', padding: '0px 2px' }}>{cartcount == 0 ? "" : cartcount}</span>
                                 Cart</p></NavLink>
                         </div>
                     </Nav>
@@ -58,8 +64,8 @@ export default function NavigationBar() {
                         title={<MdAccountBox style={{ backgroundColor: 'white', color: 'black', width: '30px', height: '27px' }} />}
                         id="navbarScrollingDropdown"
                         style={{ marginRight: '7vw', width: '70px', height: '40px', backgroundColor: "white", borderRadius: '5px' }}>
-                        <NavDropdown.Item ><NavLink to="/myacount">My Account</NavLink></NavDropdown.Item>
-                        <NavDropdown.Item ><NavLink to="/myaccount/profile">Profile</NavLink></NavDropdown.Item>
+                        <NavDropdown.Item ><NavLink to="/myaccount">My Account</NavLink></NavDropdown.Item>
+                        <NavDropdown.Item ><NavLink to="/myaccount">Profile</NavLink></NavDropdown.Item>
                         <NavDropdown.Item >Signout&nbsp;&nbsp;<RiLogoutCircleRLine /></NavDropdown.Item>
                     </NavDropdown>
                 </Navbar.Collapse>

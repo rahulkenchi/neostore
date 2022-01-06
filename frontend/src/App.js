@@ -13,6 +13,7 @@ import Profile from './component/Profile'
 import AddNewAddress from './component/AddNewAddress';
 import Order from './component/Order'
 import Checkout from './component/Checkout';
+
 function App() {
 
   return (
@@ -27,7 +28,8 @@ function App() {
           <Route path="/myaccount" element={<MyAccount />} >
             <Route path="" element={<Profile />} />
             <Route path="changepassword" element={<ChangePassword />} />
-            <Route path="address" element={<AddNewAddress />} />
+            <Route path="addnewaddress" element={<AddNewAddress />} />
+            <Route path="address" element={<Checkout />} />
             <Route path="order" element={<Order />} />
             <Route path="checkout" element={<Checkout />} />
           </Route>
