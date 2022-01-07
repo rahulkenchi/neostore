@@ -11,12 +11,11 @@ export default function NavigationBar() {
     const dispatch = useDispatch()
     const cartcount = useSelector(state => state.cartReducer)
     useEffect(() => {
-        dispatch({ type: 'INC' })
     }, [])
     return (
         <Navbar bg="dark" expand="lg" >
             <Container fluid >
-                <Navbar.Brand style={{ color: 'white', fontSize: 'x-large', margin: ' auto 5vw' }}>Neo<span style={{ color: 'red', fontWeight: 'bold' }}>STORE</span></Navbar.Brand>
+                <Navbar.Brand style={{ color: 'white', fontSize: 'x-large', margin: ' auto 5vw' }}>Neo<strong style={{ color: 'red' }}>STORE</strong></Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
                     <Nav
@@ -40,33 +39,36 @@ export default function NavigationBar() {
                     >
                         <Nav.Link className="text-white"><NavLink to="/myaccount/order">Order</NavLink></Nav.Link>
                     </Nav>
-                    <Form className="d-flex">
-                        <FormControl
-                            type="search"
-                            placeholder="Search"
-                            className="me-2"
-                            aria-label="Search"
-                        />
-                    </Form>
+                    <Nav>
+                        <Form className="d-flex">
+                            <FormControl
+                                type="search"
+                                placeholder="Search"
+                                className="me-2"
+                                aria-label="Search"
+                            />
+                        </Form>
+                    </Nav>
                     <Nav
                         className="me-auto my-2 my-lg-0"
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <div style={{ backgroundColor: 'white', width: '70px', height: '40px', borderRadius: '5px' }}>
-                            <NavLink to="/cart"><p className="d-flex justify-content-center align-items-center h-100 m-0"  >
+                        <div style={{ backgroundColor: 'white', width: '70px', height: '40px', borderRadius: '5px', position: 'relative' }}>
+                            <NavLink to="/cart"><p className="d-flex justify-content-center align-items-center h-100 m-0 navbarclass"  >
                                 <FaShoppingCart style={{ fontSize: 'large' }} />
-                                <span style={{ position: 'relative', bottom: '10px', borderRadius: '50%', fontWeight: 'bold', fontSize: 'small', backgroundColor: '#ff1656', color: 'white', padding: '0px 2px' }}>{cartcount == 0 ? "" : cartcount}</span>
-                                Cart</p></NavLink>
+                                <span style={{ position: 'absolute', top: '0px', borderRadius: '50%', fontWeight: 'bold', fontSize: 'small', backgroundColor: '#ff1656', color: 'white', padding: '0px 2px', left: '20px' }}>{cartcount == 0 ? "" : cartcount}</span>
+                                &nbsp;&nbsp;Cart</p></NavLink>
                         </div>
                     </Nav>
                     <NavDropdown
+                        className="navbarclass"
                         title={<MdAccountBox style={{ backgroundColor: 'white', color: 'black', width: '30px', height: '27px' }} />}
                         id="navbarScrollingDropdown"
                         style={{ marginRight: '7vw', width: '70px', height: '40px', backgroundColor: "white", borderRadius: '5px' }}>
                         <NavDropdown.Item ><NavLink to="/myaccount">My Account</NavLink></NavDropdown.Item>
                         <NavDropdown.Item ><NavLink to="/myaccount">Profile</NavLink></NavDropdown.Item>
-                        <NavDropdown.Item >Signout&nbsp;&nbsp;<RiLogoutCircleRLine /></NavDropdown.Item>
+                        <NavDropdown.Item ><NavLink to="/">Signout&nbsp;&nbsp;<RiLogoutCircleRLine /></NavLink></NavDropdown.Item>
                     </NavDropdown>
                 </Navbar.Collapse>
             </Container >

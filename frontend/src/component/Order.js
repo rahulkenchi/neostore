@@ -6,7 +6,7 @@ export default function Order() {
             {[0, 1, 2].map((ele) =>
                 <Card style={{}}>
                     <Card.Body>
-                        <Card.Title><span style={{ color: "orange", fontWeight: "bold" }}>TRANSIT</span> Order By:{ }</Card.Title>
+                        <Card.Title><b style={{ color: "orange" }}>TRANSIT</b> Order By:{ }</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">Placed on :{ }</Card.Subtitle>
                         <hr />
                         <Card.Text>

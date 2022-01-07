@@ -25,11 +25,11 @@ const productSchema = new mongoose.Schema({
     },
     color_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "color"
+        ref: "colors"
     },
     category_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "category"
+        ref: "categories"
     },
     created_at: {
         type: Date,

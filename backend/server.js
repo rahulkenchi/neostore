@@ -1,8 +1,10 @@
 const PORT = 9999
 const db = "mongodb://localhost:27017/neostore"
 const userSchema = require('./models/userSchema')
-const productSchema = require('./models/productSchema')
 const subscribeSchema = require('./models/subscribeSchema')
+const productSchema = require('./models/productSchema')
+const colorSchema = require('./models/colorSchema')
+const categoriesSchema = require('./models/categoriesSchema')
 const bcrypt = require('bcrypt')
 const CryptoJS = require('crypto-js')
 const saltRounds = 10
@@ -43,7 +45,7 @@ function authenticationToken(req, res, next) {
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-connectDB()
+// connectDB()
 
 
 app.post("/login", (req, res) => {
@@ -143,6 +145,13 @@ app.post("/subscribe", (req, res) => {
     tmp.save((err) => { if (err) { res.json({ err: 0 }) } else { res.json({ err: 1 }) } })
 })
 
+app.get("/getproducts", (req, res) => {
+    console.log(req.params)
+    productSchema.find().populate(['category_id', 'color_id']).then(data => {
+        res.json(data)
+    })
+})
+
 app.get("/sentotp", (req, res) => {
     const nodemailer = require("nodemailer");
     async function main() {
@@ -178,20 +187,12 @@ app.get("/sentotp", (req, res) => {
         console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     }
 
-    main().catch(console.error);
+    // main().catch(console.error);
     res.json({ err: 0 })
 })
 
 app.listen(PORT, (err) => { if (err) throw err; console.log(`Working on PORT ${PORT}`) })
 
-app.post("/", (req, res) => {
-    console.log(req.body, 'save is commented')
-    // let tmp = new productSchema(req.body)
-    // tmp.save((err) => {
-    //     if (err) throw err;
-    // })
-    res.end()
-})
 
 //code to test token generation and authentication
 // app.get("/", (req, res) => {

@@ -8,8 +8,8 @@ a{
 }
 
 
-.nav-link a:hover,.nav-link p:hover{
-  color:red
+.nav-link a:hover,.nav-link p:hover,.navbarclass:hover{
+  color:red;
 }
 
 .App {

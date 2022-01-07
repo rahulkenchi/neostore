@@ -1,15 +1,28 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { useDispatch } from 'react-redux'
 import { AiFillStar, AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
-import { Button, Collapse, Card, Row, Col, Pagination } from 'react-bootstrap'
-
+import { Button, Collapse, Card, Row, Col, Pagination, Form } from 'react-bootstrap'
 
 export default function Product() {
+    const dispatch = useDispatch()
+    const [product, setProduct] = useState([])
+    const [categories, setCategories] = useState([])
+    const [colors, setColors] = useState([])
     const [open, setOpen] = useState({
         categories: false,
         color: false
     })
     useEffect(() => {
-
+        axios.get("http://localhost:9999/getproducts")
+            .then(res => { setProduct(res.data); console.log(res.data) })
+            .catch(err => console.log(err))
+        // axios.get("http://localhost:9999/categories")
+        //     .then(res => { setCategories(res.data); console.log(res.data) })
+        //     .catch(err => console.log(err))
+        // axios.get("http://localhost:9999/colors")
+        //     .then(res => { setColors(res.data); console.log(res.data) })
+        //     .catch(err => console.log(err))
     }, [])
 
     // let active = 2;
@@ -32,10 +45,9 @@ export default function Product() {
                         <p onClick={() => setOpen({ ...open, categories: !open.categories })} className='m-0'>Categories</p>
                         <Collapse in={open.categories}>
                             <ul>
-                                <li>Table</li>
-                                <li>Bed</li>
-                                <li>Cupboard</li>
-                                <li>Chairs</li>
+                                {categories.map((ele) =>
+                                    <li> <Form.Check type="checkbox" label={ele.color_name} /></li>
+                                )}
                             </ul>
                         </Collapse>
                     </Button>
@@ -58,15 +70,17 @@ export default function Product() {
                     Sort By: <AiFillStar className='ms-1 me-1' /> <Button variant="light"><AiOutlineArrowUp /></Button><Button variant="light"><AiOutlineArrowDown /></Button>
                 </h5>
                 <Row className="g-3">
-                    {[0, 1, 2, 3, 5].map((ele) =>
-                        <Col sm={6} md={4} lg={3} >
-                            <Card style={{ maxWidth: '250px', margin: '10px auto' }}>
-                                <Card.Img variant="top" height="100px" src="https://media.istockphoto.com/photos/old-wooden-chair-picture-id1288259097?b=1&k=20&m=1288259097&s=170667a&w=0&h=J6H9f5HTSNxxlf5ffiRpYZWQakQENYWXmUhg8XaBjBk=" />
+                    {product.map((ele) =>
+                        <Col sm={6} md={4} lg={4} >
+                            <Card style={{ maxWidth: '250px', margin: '10px auto', height: '400px', position: 'relative' }}>
+                                <Card.Img variant="top" height="200px" src={`./product_images/${ele.product_image}`} />
                                 <Card.Body>
-                                    <Card.Title style={{ color: 'blue' }}>Card Title</Card.Title>
+                                    <Card.Title style={{ color: 'blue' }}>{ele.product_name}</Card.Title>
                                     <Card.Text>
-                                        <p>50000</p>
-                                        <p className="text-center"><Button variant="danger">Add to Cart</Button></p>
+                                        <p>{ele.product_cost}</p>
+                                        <Button variant="danger"
+                                            onMouseOver={() => dispatch({ type: 'INC' })}
+                                            style={{ position: 'absolute', bottom: '15px', left: '30%' }}>Add to Cart</Button>
                                         <p></p>
                                     </Card.Text>
                                 </Card.Body>
