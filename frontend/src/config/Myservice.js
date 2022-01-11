@@ -54,5 +54,5 @@ export function getsearch(data) {
 }
 
 export function getproductdetail(data) {
-    return axios.post(`${MAIN_URL}/getproductdetail`, data)
+    return axios.post(`${MAIN_URL}/getproductdetail${data}`)
 }

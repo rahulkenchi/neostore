@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom'
 import { BsFillShareFill } from 'react-icons/bs'
 import { FacebookShareButton, TwitterShareButton, WhatsappShareButton, EmailShareButton, FacebookIcon, WhatsappIcon, TwitterIcon, EmailIcon } from 'react-share'
 import Magnifier from 'react-magnifier'
-import { Container, Tabs, Tab } from 'react-bootstrap'
+import { Container, Tabs, Tab, Button } from 'react-bootstrap'
 
 export default function ProductDetail() {
     const location = useLocation()
@@ -14,7 +14,8 @@ export default function ProductDetail() {
     const [key, setKey] = useState('Description');
 
     useEffect(() => {
-        getproductdetail({ id: location.search })
+        console.log(location.search)
+        getproductdetail(location.search)
             .then(res => {
                 setProductDetail(res.data)
                 setCurrentImage(res.data.product_image)
@@ -33,17 +34,16 @@ export default function ProductDetail() {
                         />
                     </p>
                     <p className="d-flex overflow-auto pb-3">
-                        {productDetail &&
-                            productDetail.product_subimages.map(ele =>
-                                <img height="60px" alt="no image" src={`./product_images/${ele}`} onClick={() => setCurrentImage(ele)} className="m-1" />
-                            )}
+                        {productDetail && productDetail.product_subimages.map(ele =>
+                            <img height="60px" alt="no image" src={`./product_images/${ele}`} onClick={() => setCurrentImage(ele)} className="m-1" />
+                        )}
                     </p>
                 </div>
                 <div className="p-2">
                     <h3>{productDetail && productDetail.product_name}</h3>
                     <p ><CreateStar star={productDetail && productDetail.product_rating} /></p>
                     <hr />
-                    <p>Price : <i class="fa fa-inr"></i> {productDetail && productDetail.product_cost}</p>
+                    <p>Price : <i className="fa fa-inr"></i> {productDetail && productDetail.product_cost}</p>
                     <p className="d-flex">Color :&nbsp;<input type="color" value={productDetail && productDetail.color_id ? productDetail.color_id.color_code : '#ffffff'} /></p>
                     <p>Share <BsFillShareFill /></p>
                     <p>
@@ -59,6 +59,9 @@ export default function ProductDetail() {
                         <EmailShareButton url={window.location} className="me-2">
                             <EmailIcon className="rounded-circle" size="40px" ></EmailIcon>
                         </EmailShareButton>
+                    </p>
+                    <p>
+                        <Button variant="info">Add to Cart</Button>
                     </p>
                 </div>
             </div>
