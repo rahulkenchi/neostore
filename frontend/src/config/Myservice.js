@@ -50,7 +50,7 @@ export function getpopularproducts() {
 }
 
 export function getsearch(data) {
-    return axios.post(`${MAIN_URL}/getsearch${data}`)
+    return axios.post(`${MAIN_URL}/getsearch`, data)
 }
 
 export function getproductdetail(data) {

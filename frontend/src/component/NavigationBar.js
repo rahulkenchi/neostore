@@ -22,7 +22,10 @@ export default function NavigationBar() {
         if (searchvalue.length > 0) {
             getsearch({ 'data': searchvalue })
                 .then(res => {
-                    setSearchList(res.data)
+                    if (res.data.length != 0) {
+                        setSearchList(res.data)
+                        // console.log(res.data)
+                    }
                 })
                 .catch(err => console.log(err))
         }
