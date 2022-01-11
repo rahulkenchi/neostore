@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import React, { Suspense } from 'react'
+import { Spinner } from 'react-bootstrap'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 const Footer = React.lazy(() => import('./component/Footer'));
 const NavigationBar = React.lazy(() => import('./component/NavigationBar'))
@@ -16,22 +17,23 @@ const Order = React.lazy(() => import('./component/Order'));
 const Checkout = React.lazy(() => import('./component/Checkout'));
 const ErrorBoundary = React.lazy(() => import('./component/ErrorBoundary'));
 const Dashboard = React.lazy(() => import('./component/Dashboard'))
-
+const ProductDetail = React.lazy(() => import('./component/ProductDetail'))
 
 
 function App() {
 
   return (
-    <Suspense fallback={<div>Loading2...</div>}>
+    <Suspense fallback={<div className="text-center"><Spinner animation="border" /></div>}>
       <BrowserRouter>
-        <Suspense fallback={<div>Loading2...</div>}><NavigationBar /></Suspense>
-        <Suspense fallback={<div>Loading2...</div>}>
+        <Suspense fallback={<div className="text-center"><Spinner animation="border" /></div>}><NavigationBar /></Suspense>
+        <Suspense fallback={<div className="text-center"><Spinner animation="border" /></div>}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Registeration />} />
             <Route path="/recoverpassword" element={<RecoverPassword />} />
             <Route path="/product" element={<Product />} />
+            <Route path="/productdetail" element={<ProductDetail />} />
             <Route path="/myaccount" element={<MyAccount />} >
               <Route path="" element={<Profile />} />
               <Route path="changepassword" element={<ChangePassword />} />
@@ -43,7 +45,7 @@ function App() {
             {/* <Route path="*" element={<ChangePassword />} /> */}
           </Routes>
         </Suspense>
-        <Suspense fallback={<div>Loading3...</div>}><Footer /></Suspense>
+        <Suspense fallback={<div className="text-center"><Spinner animation="border" /></div>}><Footer /></Suspense>
       </BrowserRouter>
     </Suspense>
   );

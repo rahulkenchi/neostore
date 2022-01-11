@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import ReactPaginate from 'react-paginate'
 import CreateStar from './CreateStar'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { getproducts, getcategories, getcolors } from '../config/Myservice'
 import { useDispatch } from 'react-redux'
 import { AiFillStar, AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
-import { Button, Collapse, Card, Row, Col, Pagination, Form } from 'react-bootstrap'
+import { Button, Collapse, Card, Row, Col, Form } from 'react-bootstrap'
 
 export default function Product() {
     const dispatch = useDispatch()
+    const location = useLocation()
+    const navigate = useNavigate()
     const [product, setProduct] = useState([])
     const [categories, setCategories] = useState([])
     const [colors, setColors] = useState([])
@@ -14,102 +18,145 @@ export default function Product() {
         categories: false,
         color: false
     })
+
     useEffect(() => {
-        getproducts()
-            .then(res => { setProduct(res.data); console.log(res.data) })
+        getproducts(location.search)
+            .then(res => {
+                if (res.data.err == 0) {
+                    setProduct(res.data.data)
+                    //console.log(res.data.data)
+                }
+            })
             .catch(err => console.log(err))
         getcategories()
-            .then(res => { setCategories(res.data); console.log(res.data) })
+            .then(res => {
+                if (res.data.err == 0) {
+                    setCategories(res.data.data);
+                    // console.log(res.data.data)
+                }
+            })
             .catch(err => console.log(err))
         getcolors()
-            .then(res => { setColors(res.data); console.log(res.data) })
+            .then(res => {
+                if (res.data.err == 0) {
+                    setColors(res.data.data);
+                    // console.log(res.data.data)
+                }
+            })
             .catch(err => console.log(err))
     }, [])
 
-    // let active = 2;
-    // let items = [];
-    // for (let number = 1; number <= 5; number++) {
-    //     items.push(
-    //         <Pagination.Item key={number} active={number === active} >
-    //             {number}
-    //         </Pagination.Item>,
-    //     );
-    // }
+
+    function Items({ currentItems }) {
+        return (<>
+            <Row className="g-3 paginationcss">
+                {currentItems && currentItems.map((ele) =>
+                    <Col sm={6} md={4} lg={4} >
+                        <Card className="h-100" onClick={() => navigate(`/productdetail?id=${ele._id}`)}>
+                            <Card.Img variant="top" height="200px" src={`./product_images/${ele.product_image}`} />
+                            <Card.Body>
+                                <Card.Title style={{ color: 'blue' }}>{ele.product_name}</Card.Title>
+                                <Card.Text>
+                                    <p><b><i class="fa fa-inr"></i>{ele.product_cost}</b></p>
+                                    <p className="text-center "><Button variant="danger"
+                                        onMouseOver={() => dispatch({ type: 'INC' })}
+                                    >Add to Cart</Button></p>
+                                    <p className="text-center"><CreateStar star={ele.product_rating} /></p>
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                )
+                }
+            </Row>
+        </>
+        );
+    }
+
+
+    function PaginatedItems({ itemsPerPage }) {
+        // We start with an empty list of items.
+        const [currentItems, setCurrentItems] = useState(null);
+        const [pageCount, setPageCount] = useState(0);
+        // Here we use item offsets; we could also use page offsets
+        // following the API or data you're working with.
+        const [itemOffset, setItemOffset] = useState(0);
+
+        useEffect(() => {
+            // Fetch items from another resources.
+            const endOffset = itemOffset + itemsPerPage;
+            console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+            setCurrentItems(product.slice(itemOffset, endOffset));
+            setPageCount(Math.ceil(product.length / itemsPerPage));
+        }, [itemOffset, itemsPerPage]);
+
+        // Invoke when user click to request another page.
+        const handlePageClick = (event) => {
+            const newOffset = (event.selected * itemsPerPage) % product.length;
+            console.log(
+                `User requested page number ${event.selected}, which is offset ${newOffset}`
+            );
+            setItemOffset(newOffset);
+        };
+
+        return (
+            <>
+                <Items currentItems={currentItems} />
+                <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="next >"
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={5}
+                    pageCount={pageCount}
+                    previousLabel="< previous"
+                    renderOnZeroPageCount={null}
+                />
+            </>
+        );
+    }
+
 
     return (
         <div className="d-flex justify-content-around p-3 product">
             <hr />
             <div className='productdiv1'>
-                <ul className="p-0">
-                    <li><Button variant="light" className="w-100 my-2">All Products</Button></li>
-                    <li><Button variant="light" aria-controls="example-collapse-text" aria-expanded={open.categories} className="text-start w-100 my-2 overflow-hidden">
-                        <p onClick={() => setOpen({ ...open, categories: !open.categories })} className='m-0'>Categories</p>
-                        <Collapse in={open.categories}>
-                            <ul>
-                                {categories.map((ele) =>
-                                    <li> <Form.Check type="checkbox" name="categories" label={ele.category_name} value={ele.category_name} /></li>
-                                )}
-                            </ul>
-                        </Collapse>
-                    </Button>
+                <Form >
+                    <ul className="p-0">
+                        <li><Button variant="light" className="w-100 my-2" type="submit" >All Products</Button></li>
+                        <li><Button variant="light" aria-controls="example-collapse-text" aria-expanded={open.categories} className="text-start w-100 my-2 overflow-hidden">
+                            <p onClick={() => setOpen({ ...open, categories: !open.categories })} className='m-0'>Categories</p>
+                            <Collapse in={open.categories}>
+                                <ul style={{ paddingLeft: '10%' }}>
+                                    {categories.map((ele) =>
+                                        <li className="overflow-hidden"> <Form.Check type="checkbox" name="category_id" label={ele.category_name} value={ele._id} /></li>
+                                    )}
+                                </ul>
+                            </Collapse>
+                        </Button>
 
-                    </li>
-                    <li><Button variant="light" aria-controls="example-collapse-text" aria-expanded={open.color} className="text-start w-100 my-2">
-                        <p onClick={() => setOpen({ ...open, color: !open.color })} className='m-0'>Color</p>
-                        <Collapse in={open.color}>
-                            <ul >
-                                {colors.map((ele) =>
-                                    <li> <Form.Check type="checkbox" name="colors" label={ele.color_name} value={ele.color_name} /></li>
-                                )}
-                            </ul>
-                        </Collapse>
-                    </Button>
-                    </li>
-                    <li><Button variant="warning" className="w-100 my-2">Apply Filter</Button></li>
-                </ul>
+                        </li>
+                        <li><Button variant="light" aria-controls="example-collapse-text" aria-expanded={open.color} className="text-start w-100 my-2">
+                            <p onClick={() => setOpen({ ...open, color: !open.color })} className='m-0'>Color</p>
+                            <Collapse in={open.color}>
+                                <ul style={{ paddingLeft: '10%' }}>
+                                    {colors.map((ele) =>
+                                        <li className="overflow-hidden"> <Form.Check type="checkbox" name="color_id" label={ele.color_name} value={ele._id} /></li>
+                                    )}
+                                </ul>
+                            </Collapse>
+                        </Button>
+                        </li>
+                        <li><Button variant="warning" className="w-100 my-2" type="submit">Apply Filter</Button></li>
+                    </ul>
+                </Form>
             </div>
             <div className='productdiv2'>
                 <h5 className='text-end'>
                     Sort By: <AiFillStar className='ms-1 me-1' /> <Button variant="light"><AiOutlineArrowUp /></Button><Button variant="light"><AiOutlineArrowDown /></Button>
                 </h5>
-                <Row className="g-3">
-                    {product.map((ele) =>
-                        <Col sm={6} md={4} lg={4} >
-                            <Card style={{ maxWidth: '250px', margin: '10px auto', height: '400px', position: 'relative' }}>
-                                <Card.Img variant="top" height="200px" src={`./product_images/${ele.product_image}`} />
-                                <Card.Body>
-                                    <Card.Title style={{ color: 'blue' }}>{ele.product_name}</Card.Title>
-                                    <Card.Text>
-                                        <p>{ele.product_cost}</p>
-                                        <Button variant="danger"
-                                            onMouseOver={() => dispatch({ type: 'INC' })}
-                                            style={{ position: 'absolute', bottom: '15px', left: '30%' }}>Add to Cart</Button>
-                                        <p><CreateStar star={ele.product_rating} /></p>
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    )}
+                <Row>
+                    <PaginatedItems itemsPerPage={6} />
                 </Row>
-                {/* <div className="d-flex justify-content-flex">
-                    <Pagination>    
-                        <Pagination.First />
-                        <Pagination.Prev />
-                        <Pagination.Item>{1}</Pagination.Item>
-                        <Pagination.Ellipsis />
-
-                        <Pagination.Item>{10}</Pagination.Item>
-                        <Pagination.Item>{11}</Pagination.Item>
-                        <Pagination.Item active>{12}</Pagination.Item>
-                        <Pagination.Item>{13}</Pagination.Item>
-                        <Pagination.Item disabled>{14}</Pagination.Item>
-
-                        <Pagination.Ellipsis />
-                        <Pagination.Item>{20}</Pagination.Item>
-                        <Pagination.Next />
-                        <Pagination.Last />
-                    </Pagination>
-                </div> */}
             </div>
         </div >
     )

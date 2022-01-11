@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
 import { ImFacebook, ImGoogle, ImTwitter } from 'react-icons/im'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
-import { Form, FormControl, Button, InputGroup } from 'react-bootstrap'
+import { Form, FormControl, Button, InputGroup, Spinner } from 'react-bootstrap'
 const styled = {
     margin: 0,
     fontSize: 'small',

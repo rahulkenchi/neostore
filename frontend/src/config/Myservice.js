@@ -29,8 +29,8 @@ export function sentotp(data) {
     return axios.post(`${MAIN_URL}/sentotp`, data)
 }
 
-export function getproducts() {
-    return axios.get(`${MAIN_URL}/sendotp`)
+export function getproducts(data) {
+    return axios.get(`${MAIN_URL}/commonproducts${data}`)
 }
 
 export function getcategories() {
@@ -47,4 +47,12 @@ export function getcarouselimages() {
 
 export function getpopularproducts() {
     return axios.get(`${MAIN_URL}/defaultTopRatingProduct`)
+}
+
+export function getsearch(data) {
+    return axios.post(`${MAIN_URL}/getsearch${data}`)
+}
+
+export function getproductdetail(data) {
+    return axios.post(`${MAIN_URL}/getproductdetail`, data)
 }

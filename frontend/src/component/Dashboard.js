@@ -48,7 +48,7 @@ export default function Dashboard() {
                                         <p className="text-center" ><Button variant="danger"
                                             onMouseOver={() => dispatch({ type: 'INC' })}
                                         >Add to Cart</Button> </p>
-                                        <p><CreateStar star={ele.product_rating} /></p>
+                                        <CreateStar star={ele.product_rating} />
                                     </Card.Text>
                                 </Card.Body>
                             </Card>

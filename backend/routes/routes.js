@@ -11,6 +11,15 @@ const jwt = require('jsonwebtoken')
 const express = require('express')
 const router = express.Router()
 dotenv.config()
+
+router.get("/", (req, res) => {
+    let payload = {
+        enpstd: process.env.encryptSecret
+    }
+    const token = jwt.sign(payload, process.env.jwtSecret, { expiresIn: 3600000 })
+    res.json({ "err": 0, "msg": "Token generation Success", "token": token })
+})
+
 router.get("/getproducts", (req, res) => {
     productSchema.find().populate(['category_id', 'color_id']).then(data => {
         res.json(data)
@@ -19,32 +28,44 @@ router.get("/getproducts", (req, res) => {
 
 router.get("/getcategories", (req, res) => {
     categoriesSchema.find({}, (err, data) => {
-        if (err) throw res.json({ err: 1, msg: 'error fetching categories' })
+        if (err) { res.json({ err: 1, msg: 'error fetching categories' }) }
         else if (data != null) {
-            console.log(data)
-            res.json(data)
+            res.json({ err: 0, 'data': data })
         }
     })
 })
 
 router.get("/getcolors", (req, res) => {
     colorSchema.find({}, (err, data) => {
-        if (err) throw res.json({ err: 1, msg: 'error fetching colors' })
+        if (err) {
+            res.json({ err: 1, msg: 'error fetching colors' })
+        }
         else if (data != null) {
-            console.log(data)
-            res.json(data)
+            res.json({ err: 0, 'data': data })
+        }
+    })
+})
+
+router.get("/commonproducts", (req, res) => {
+    console.log(req.query)
+    productSchema.find(req.query, (err, data) => {
+        if (err) {
+            res.json({ err: 1, msg: 'Please inform this to technical team' });
+        }
+        else if (data != null) {
+            res.json({ err: 0, 'data': data })
         }
     })
 })
 
 router.get("/defaultTopRatingProduct", (req, res) => {
-    productSchema.find({}).sort({ rating: -1 }).limit(6).populate(['category_id', 'color_id'])
+    productSchema.find({}).sort({ product_rating: -1 }).limit(6).populate(['category_id', 'color_id'])
         .then(response => res.json(response))
         .catch(err => res.send({ 'err': 1, msg: err }))
 })
 
 router.get("/getAllCategories", (req, res) => {
-    productSchema.find({}, "product_image").sort({ rating: -1 }).limit(6)
+    productSchema.find({}, "product_image").sort({ product_rating: -1 }).limit(6)
         .then(response => res.json(response))
         .catch(err => res.send({ 'err': 1, msg: err }))
 })
@@ -195,12 +216,23 @@ router.post("/subscribe", (req, res) => {
     tmp.save((err) => { if (err) { res.json({ err: 0 }) } else { res.json({ err: 1 }) } })
 })
 
-router.get("/", (req, res) => {
-    let payload = {
-        enpstd: process.env.encryptSecret
-    }
-    const token = jwt.sign(payload, process.env.jwtSecret, { expiresIn: 3600000 })
-    res.json({ "err": 0, "msg": "Token generation Success", "token": token })
+router.post("/getsearch", (req, res) => {
+    productSchema.find({ product_name: { $regex: req.body.data, $options: '$i' } }, "product_name").populate(['category_id', 'color_id'])
+        .then(response => {
+            res.json(response)
+        })
+})
+
+router.post("/getproductdetail", (req, res) => {
+    productSchema.findOne({ _id: req.query.id }).populate(["category_id", "color_id"])
+        .then(data => {
+            if (data != null) {
+                res.json(data)
+            }
+            else {
+                res.json({ err: 1, msg: "No such item found" })
+            }
+        })
 })
 
 module.exports = router
