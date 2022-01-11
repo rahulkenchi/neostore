@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import CreateStar from './CreateStar'
+import { useDispatch } from 'react-redux'
 import { getproductdetail } from '../config/Myservice'
 import { useLocation } from 'react-router-dom'
 import { BsFillShareFill } from 'react-icons/bs'
@@ -9,6 +10,7 @@ import { Container, Tabs, Tab, Button } from 'react-bootstrap'
 
 export default function ProductDetail() {
     const location = useLocation()
+    const dispatch = useDispatch()
     const [productDetail, setProductDetail] = useState(null)
     const [currentImage, setCurrentImage] = useState('')
     const [key, setKey] = useState('Description');
@@ -19,7 +21,7 @@ export default function ProductDetail() {
             .then(res => {
                 setProductDetail(res.data)
                 setCurrentImage(res.data.product_image)
-                console.log(res.data)
+                // console.log(res.data)
             })
             .catch(err => console.log(err))
     }, [])
@@ -29,9 +31,7 @@ export default function ProductDetail() {
             <div className='productdetaildiv1'>
                 <div className="p-2">
                     <p>
-                        <Magnifier src={`./product_images/${currentImage}`} width="100%"
-                            zoomFactor={2} mgWidth={90} mgHeight={90}
-                        />
+                        <Magnifier src={`./product_images/${currentImage}`} width="100%" />
                     </p>
                     <p className="d-flex overflow-auto pb-3">
                         {productDetail && productDetail.product_subimages.map(ele =>
@@ -61,7 +61,7 @@ export default function ProductDetail() {
                         </EmailShareButton>
                     </p>
                     <p>
-                        <Button variant="info">Add to Cart</Button>
+                        <Button variant="info" onClick={() => dispatch({ type: 'INC' })}>Add to Cart</Button>
                     </p>
                 </div>
             </div>

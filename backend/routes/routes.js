@@ -47,7 +47,6 @@ router.get("/getcolors", (req, res) => {
 })
 
 router.get("/commonproducts", (req, res) => {
-    console.log(req.query)
     productSchema.find(req.query, (err, data) => {
         if (err) {
             res.json({ err: 1, msg: 'Please inform this to technical team' });

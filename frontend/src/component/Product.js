@@ -52,14 +52,15 @@ export default function Product() {
             <Row className="g-3 paginationcss">
                 {currentItems && currentItems.map((ele) =>
                     <Col sm={6} md={4} lg={4} >
-                        <Card className="h-100" onClick={() => navigate(`/productdetail?id=${ele._id}`)}>
-                            <Card.Img variant="top" height="200px" src={`./product_images/${ele.product_image}`} />
+                        <Card className="h-100">
+                            <Card.Img variant="top" height="200px" src={`./product_images/${ele.product_image}`}
+                                onClick={() => navigate(`/productdetail?id=${ele._id}`)} />
                             <Card.Body>
                                 <Card.Title style={{ color: 'blue' }}>{ele.product_name}</Card.Title>
                                 <Card.Text>
-                                    <p><b><i class="fa fa-inr"></i>{ele.product_cost}</b></p>
+                                    <p><b><i className="fa fa-inr"></i>{ele.product_cost}</b></p>
                                     <p className="text-center "><Button variant="danger"
-                                        onMouseOver={() => dispatch({ type: 'INC' })}
+                                        onClick={() => dispatch({ type: 'INC' })}
                                     >Add to Cart</Button></p>
                                     <p className="text-center"><CreateStar star={ele.product_rating} /></p>
                                 </Card.Text>
