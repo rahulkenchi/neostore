@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import CryptoJS from 'crypto-js'
 import SocialLogin from './SocialLogin'
+import { getenptoken, login } from '../config/Myservice'
 import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
 import { ImFacebook, ImGoogle, ImTwitter } from 'react-icons/im'
@@ -20,7 +20,7 @@ export default function Login() {
     const [showpassword, setShowPassword] = useState(false)
 
     useEffect(() => {
-        axios.get("http://localhost:9999/")
+        getenptoken()
             .then(res => {
                 if (res.data.err === 0) {
                     sessionStorage.setItem('enpstd', res.data.token)
@@ -35,7 +35,6 @@ export default function Login() {
         let n = e.target.name
         let v = e.target.value
         setData({ ...data, [n]: v })
-        console.log(data)
     }
 
     const handleSocialLogin = (user) => {
@@ -53,17 +52,18 @@ export default function Login() {
         console.error(err);
     };
 
-    const login = () => {
+    const submit = () => {
         let tmp = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
         let send = CryptoJS.AES.encrypt(JSON.stringify(data), tmp).toString()
         console.log(send)
-        axios.post("http://localhost:9999/login", { data: send })
+        login({ data: send })
             .then(res => {
                 console.log(res.data)
                 switch (res.data.err) {
                     case 0: {
                         setErrors({ ...errors, email: '', password: '' });
-                        sessionStorage.setItem('_token', res.data.token)
+                        sessionStorage.setItem('_token', res.data.token);
+                        navigate("/")//navigate to home
                     }
                         break;
                     case 1: setErrors({ ...errors, email: '', password: res.data.msg })
@@ -128,10 +128,10 @@ export default function Login() {
                         </InputGroup>
                         <p style={styled}>{errors.password}</p>
                     </Form.Group>
-                    <Button onClick={() => login()}>Login</Button>
+                    <Button onClick={() => submit()}>Login</Button>
                     <p style={styled}>{errors.submit}</p>
                 </Form>
-                <p className='w-100 text-start'><span style={{ cursor: 'pointer' }} onClick={() => navigate("/recoverpassword")}>Forgot Password ?</span></p>
+                <p className='w-100 text-start'><span style={{ cursor: 'pointer' }} onClick={() => navigate("/recoverpassword", { state: { email: data.email } })}>Forgot Password ?</span></p>
             </div>
         </div >
     )

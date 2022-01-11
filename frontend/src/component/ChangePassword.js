@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import CryptoJS from 'crypto-js'
+import { getenptoken, changepassword } from '../config/Myservice'
 import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
@@ -24,7 +24,7 @@ export default function ChangePassword() {
     const [showconfirmpassword, setShowConfirmPassword] = useState(false)
 
     useEffect(() => {
-        axios.get("http://localhost:9999/")
+        getenptoken()
             .then(res => {
                 if (res.data.err === 0) {
                     sessionStorage.setItem('enpstd', res.data.token)
@@ -50,7 +50,7 @@ export default function ChangePassword() {
         tmp2.email = jwt_decode(sessionStorage.getItem('_token')).email
         console.log(tmp2)
         let send = CryptoJS.AES.encrypt(JSON.stringify(tmp2), tmp).toString();
-        axios.post("http://localhost:9999/changepassword", { data: send })
+        changepassword({ data: send })
             .then(res => {
                 if (res.data.err === 0)
                     console.log("PASSWORD CHANGED")

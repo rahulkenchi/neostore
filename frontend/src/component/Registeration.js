@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { registration, getenptoken } from '../config/Myservice'
 import SocialLogin from './SocialLogin'
-import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import { AES } from 'crypto-js'
 import { useNavigate } from 'react-router-dom'
@@ -26,7 +26,7 @@ export default function Registeration() {
     const [errors, setErrors] = useState({ firstname: '', lastname: '', email: '', password: '', confirm_password: '', mobile: '', gender: 'not selected', submit: '' })
 
     useEffect(() => {
-        axios.get("http://localhost:9999/")
+        getenptoken()
             .then(res => {
                 if (res.data.err === 0) {
                     sessionStorage.setItem('enpstd', res.data.token)
@@ -72,7 +72,7 @@ export default function Registeration() {
                 delete tmp2.confirm_password
                 let tmp3 = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
                 let send = AES.encrypt(JSON.stringify(tmp2), tmp3).toString();
-                axios.post("http://localhost:9999/registration", { data: send })
+                registration({ data: send })
                     .then(res => {
                         console.log(res.data.msg, '1');
                         switch (res.data.err) {

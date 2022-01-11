@@ -27,7 +27,16 @@ const userSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
-    }
+    },
+    otp: {
+        type: String,
+        default: 'NO'
+    },
+    email_verified: {
+        type: Boolean,
+        default: false
+    },
+    address: Array
 })
 
 module.exports = mongoose.model("userSchema", userSchema)

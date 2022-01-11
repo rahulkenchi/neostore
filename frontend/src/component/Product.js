@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import CreateStar from './CreateStar'
+import { getproducts, getcategories, getcolors } from '../config/Myservice'
 import { useDispatch } from 'react-redux'
 import { AiFillStar, AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
 import { Button, Collapse, Card, Row, Col, Pagination, Form } from 'react-bootstrap'
@@ -14,15 +15,15 @@ export default function Product() {
         color: false
     })
     useEffect(() => {
-        axios.get("http://localhost:9999/getproducts")
+        getproducts()
             .then(res => { setProduct(res.data); console.log(res.data) })
             .catch(err => console.log(err))
-        // axios.get("http://localhost:9999/categories")
-        //     .then(res => { setCategories(res.data); console.log(res.data) })
-        //     .catch(err => console.log(err))
-        // axios.get("http://localhost:9999/colors")
-        //     .then(res => { setColors(res.data); console.log(res.data) })
-        //     .catch(err => console.log(err))
+        getcategories()
+            .then(res => { setCategories(res.data); console.log(res.data) })
+            .catch(err => console.log(err))
+        getcolors()
+            .then(res => { setColors(res.data); console.log(res.data) })
+            .catch(err => console.log(err))
     }, [])
 
     // let active = 2;
@@ -46,7 +47,7 @@ export default function Product() {
                         <Collapse in={open.categories}>
                             <ul>
                                 {categories.map((ele) =>
-                                    <li> <Form.Check type="checkbox" label={ele.color_name} /></li>
+                                    <li> <Form.Check type="checkbox" name="categories" label={ele.category_name} value={ele.category_name} /></li>
                                 )}
                             </ul>
                         </Collapse>
@@ -57,12 +58,14 @@ export default function Product() {
                         <p onClick={() => setOpen({ ...open, color: !open.color })} className='m-0'>Color</p>
                         <Collapse in={open.color}>
                             <ul >
-                                <li>brown</li>
-                                <li>blue</li>
+                                {colors.map((ele) =>
+                                    <li> <Form.Check type="checkbox" name="colors" label={ele.color_name} value={ele.color_name} /></li>
+                                )}
                             </ul>
                         </Collapse>
                     </Button>
                     </li>
+                    <li><Button variant="warning" className="w-100 my-2">Apply Filter</Button></li>
                 </ul>
             </div>
             <div className='productdiv2'>
@@ -81,7 +84,7 @@ export default function Product() {
                                         <Button variant="danger"
                                             onMouseOver={() => dispatch({ type: 'INC' })}
                                             style={{ position: 'absolute', bottom: '15px', left: '30%' }}>Add to Cart</Button>
-                                        <p></p>
+                                        <p><CreateStar star={ele.product_rating} /></p>
                                     </Card.Text>
                                 </Card.Body>
                             </Card>

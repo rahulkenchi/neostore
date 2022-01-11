@@ -23,21 +23,21 @@ export default function NavigationBar() {
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link className="text-white" ><NavLink to="/">Home</NavLink></Nav.Link>
+                        <Nav.Link as={NavLink} to="/" className="text-white" >Home</Nav.Link>
                     </Nav>
                     <Nav
                         className="me-auto my-2 my-lg-0"
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link className="text-white"><NavLink to="/product">Product</NavLink></Nav.Link>
+                        <Nav.Link as={NavLink} to="/product" className="text-white">Product</Nav.Link>
                     </Nav>
                     <Nav
                         className="me-auto my-2 my-lg-0"
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link className="text-white"><NavLink to="/myaccount/order">Order</NavLink></Nav.Link>
+                        <Nav.Link as={NavLink} to="/myaccount/order" className="text-white">Order</Nav.Link>
                     </Nav>
                     <Nav>
                         <Form className="d-flex">
@@ -66,9 +66,9 @@ export default function NavigationBar() {
                         title={<MdAccountBox style={{ backgroundColor: 'white', color: 'black', width: '30px', height: '27px' }} />}
                         id="navbarScrollingDropdown"
                         style={{ marginRight: '7vw', width: '70px', height: '40px', backgroundColor: "white", borderRadius: '5px' }}>
-                        <NavDropdown.Item ><NavLink to="/myaccount">My Account</NavLink></NavDropdown.Item>
-                        <NavDropdown.Item ><NavLink to="/myaccount">Profile</NavLink></NavDropdown.Item>
-                        <NavDropdown.Item ><NavLink to="/">Signout&nbsp;&nbsp;<RiLogoutCircleRLine /></NavLink></NavDropdown.Item>
+                        <NavDropdown.Item to="/myaccount">My Account</NavDropdown.Item>
+                        <NavDropdown.Item to="/myaccount">Profile</NavDropdown.Item>
+                        <NavDropdown.Item to="/">Signout&nbsp;&nbsp;<RiLogoutCircleRLine /></NavDropdown.Item>
                     </NavDropdown>
                 </Navbar.Collapse>
             </Container >
