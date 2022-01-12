@@ -174,18 +174,17 @@ router.post("/changepassword", (req, res) => {
     let bytes = CryptoJS.AES.decrypt(req.body.data, process.env.encryptSecret);
     let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
     console.log(decryptedData)
-    // userSchema.findOne({ email: decryptedData.email }, (err, data) => {
-    //     if (err) throw err;
-    //     else if (data != null) {
-    //         const salt = bcrypt.genSaltSync(Number(process.env.saltRounds))
-    //         const hash = bcrypt.hashSync(decryptedData.password, salt)
-    //         userSchema.updateOne({ email: data.email }, { $set: { password: hash } }, (err) => {
-    //             if (err) throw err;
-    //             else res.json({ err: 0 })
-    //         })
-    //     }
-    // })
-    res.end()
+    userSchema.findOne({ email: decryptedData.email }, (err, data) => {
+        if (err) throw err;
+        else if (data != null) {
+            const salt = bcrypt.genSaltSync(Number(process.env.saltRounds))
+            const hash = bcrypt.hashSync(decryptedData.password, salt)
+            userSchema.updateOne({ email: data.email }, { $set: { password: hash } }, (err) => {
+                if (err) throw err;
+                else res.json({ err: 0 })
+            })
+        }
+    })
 })
 
 router.post("/recoverpassword", (req, res) => {
@@ -232,6 +231,25 @@ router.post("/getproductdetail", (req, res) => {
                 res.json({ err: 1, msg: "No such item found" })
             }
         })
+})
+
+router.post("/profile", (req, res) => {
+    userSchema.findOne({ email: req.body.email }, (err, data) => {
+        if (err) throw err;
+        else if (data != null) {
+            let tmp = {
+                'firstname': data.firstname,
+                'lastname': data.lastname,
+                'email': data.email,
+                'gender': data.gender,
+                'mobile': data.mobile,
+            }
+            res.json({ err: 0, 'data': tmp })
+        }
+        else {
+            res.json({ err: 1, msg: 'User not found' })
+        }
+    })
 })
 
 module.exports = router

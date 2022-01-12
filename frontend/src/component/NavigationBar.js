@@ -3,20 +3,18 @@ import { getsearch } from '../config/Myservice'
 import { MdAccountBox } from 'react-icons/md'
 import { FaShoppingCart } from 'react-icons/fa'
 import { RiLogoutCircleRLine } from 'react-icons/ri'
+import { GrSearch } from 'react-icons/gr'
 import { BsClock } from 'react-icons/bs'
 import { useNavigate, NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { Navbar, Container, Nav, Form, Button, FormControl, NavDropdown, Collapse } from 'react-bootstrap'
+import { Navbar, Container, Nav, Form, Button, FormControl, NavDropdown, Collapse, InputGroup } from 'react-bootstrap'
 
 export default function NavigationBar() {
     const navigate = useNavigate()
-    const dispatch = useDispatch()
+    const [inputtext, setInputText] = useState('')
     const cartcount = useSelector(state => state.cartReducer)
     const [searchList, setSearchList] = useState([])
     const [show, setShow] = useState(false)
-    useEffect(() => {
-        console.log(searchList)
-    }, [searchList])
 
     const search = (searchvalue) => {
         if (searchvalue.length > 0) {
@@ -32,6 +30,10 @@ export default function NavigationBar() {
         else {
             setSearchList([])
         }
+    }
+
+    const signout = () => {
+        navigate("/")
     }
     return (
         <>
@@ -62,19 +64,34 @@ export default function NavigationBar() {
                             <Nav.Link as={NavLink} to="/myaccount/order" className="text-white">Order</Nav.Link>
                         </Nav>
                         <Nav>
-                            <Form className="d-flex">
-                                <FormControl
-                                    type="text"
-                                    placeholder="Search"
-                                    className="me-2"
-                                    aria-label="Search"
-                                    onMouseOver={() => setShow(true)}
-                                    onChange={(e) => search(e.target.value)}
-                                    onFocus={() => setShow(true)}
-                                    onBlur={() => setShow(false)}
-                                    aria-expanded={show}
-                                    aria-controls="example-collapse-text"
-                                />
+                            <Form className="d-flex position-relative">
+                                <InputGroup>
+                                    <Form.Group>
+                                        <GrSearch style={{ left: '20px' }} />
+                                        <FormControl
+                                            type="text"
+                                            placeholder="Search"
+                                            className="me-2"
+                                            aria-label="Search"
+                                            onChange={(e) => { search(e.target.value); setInputText(e.target.value) }}
+                                            onFocus={() => setShow(true)}
+                                            onBlur={() => setShow(false)}
+                                            aria-expanded={show}
+                                            aria-controls="example-collapse-text"
+                                        />
+                                        {inputtext.length > 0 &&
+                                            <Collapse className="position-absolute p-3 w-100" in={show} >
+                                                <div style={{ maxHeight: '25vh', overflow: 'auto', backgroundColor: `white`, zIndex: 1 }}>
+                                                    {
+                                                        searchList.map(ele =>
+                                                            <p className="" onClick={() => navigate(`/productdetail?id=${ele._id}`)}>&nbsp;{ele.product_name}</p>
+                                                        )
+                                                    }
+                                                </div>
+                                            </Collapse>
+                                        }
+                                    </Form.Group>
+                                </InputGroup>
                             </Form>
                         </Nav>
                         <Nav
@@ -94,22 +111,22 @@ export default function NavigationBar() {
                             title={<MdAccountBox style={{ backgroundColor: 'white', color: 'black', width: '30px', height: '27px' }} />}
                             id="navbarScrollingDropdown"
                             style={{ marginRight: '7vw', width: '70px', height: '40px', backgroundColor: "white", borderRadius: '5px' }}>
-                            <NavDropdown.Item to="/myaccount">My Account</NavDropdown.Item>
-                            <NavDropdown.Item to="/myaccount">Profile</NavDropdown.Item>
-                            <NavDropdown.Item to="/">Signout&nbsp;&nbsp;<RiLogoutCircleRLine /></NavDropdown.Item>
+                            <NavDropdown.Item><NavLink to="/myaccount">My Account</NavLink></NavDropdown.Item>
+                            <NavDropdown.Item><NavLink to="/myaccount">Profile</NavLink></NavDropdown.Item>
+                            <NavDropdown.Item onClick={() => signout()}>Signout&nbsp;&nbsp;<RiLogoutCircleRLine /></NavDropdown.Item>
                         </NavDropdown>
                     </Navbar.Collapse>
                 </Container >
+                {/* <Collapse className="position-absolute" style={{ top: '500px', left: '500px' }} in={show} style={{ maxHeight: '150px', overflow: 'auto' }}>
+                    <div>
+                        {
+                            searchList.map(ele =>
+                                <p><BsClock />   {ele.product_name}</p>
+                            )
+                        }
+                    </div>
+                </Collapse> */}
             </Navbar >
-            <Collapse in={show} style={{ maxHeight: '150px', overflow: 'auto' }}>
-                <div>
-                    {
-                        searchList.map(ele =>
-                            <p><BsClock />   {ele.product_name}</p>
-                        )
-                    }
-                </div>
-            </Collapse>
         </>
     )
 }

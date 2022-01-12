@@ -18,15 +18,17 @@ const Checkout = React.lazy(() => import('./component/Checkout'));
 const ErrorBoundary = React.lazy(() => import('./component/ErrorBoundary'));
 const Dashboard = React.lazy(() => import('./component/Dashboard'))
 const ProductDetail = React.lazy(() => import('./component/ProductDetail'))
+const Cart = React.lazy(() => import("./component/Cart"))
 
 
 function App() {
+  const loading = <div className="text-center"><Spinner animation="border" /></div>
 
   return (
-    <Suspense fallback={<div className="text-center"><Spinner animation="border" /></div>}>
+    <Suspense fallback={loading}>
       <BrowserRouter>
-        <Suspense fallback={<div className="text-center"><Spinner animation="border" /></div>}><NavigationBar /></Suspense>
-        <Suspense fallback={<div className="text-center"><Spinner animation="border" /></div>}>
+        <Suspense fallback={loading}><NavigationBar /></Suspense>
+        <Suspense fallback={loading}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
@@ -34,6 +36,7 @@ function App() {
             <Route path="/recoverpassword" element={<RecoverPassword />} />
             <Route path="/product" element={<Product />} />
             <Route path="/productdetail" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
             <Route path="/myaccount" element={<MyAccount />} >
               <Route path="" element={<Profile />} />
               <Route path="changepassword" element={<ChangePassword />} />
@@ -45,7 +48,7 @@ function App() {
             {/* <Route path="*" element={<ChangePassword />} /> */}
           </Routes>
         </Suspense>
-        <Suspense fallback={<div className="text-center"><Spinner animation="border" /></div>}><Footer /></Suspense>
+        <Suspense fallback={loading}><Footer /></Suspense>
       </BrowserRouter>
     </Suspense>
   );

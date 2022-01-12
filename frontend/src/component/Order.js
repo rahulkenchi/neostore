@@ -3,8 +3,8 @@ import { Card, Button } from 'react-bootstrap'
 export default function Order() {
     return (
         <div>
-            {[0, 1, 2].map((ele) =>
-                <Card style={{}}>
+            {[0, 1, 2].map((ele, index) =>
+                <Card key={index} style={{}}>
                     <Card.Body>
                         <Card.Title><b style={{ color: "orange" }}>TRANSIT</b> Order By:{ }</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">Placed on :{ }</Card.Subtitle>

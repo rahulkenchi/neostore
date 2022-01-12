@@ -51,7 +51,7 @@ export default function Product() {
         return (<>
             <Row className="g-3 paginationcss">
                 {currentItems && currentItems.map((ele) =>
-                    <Col sm={6} md={4} lg={4} >
+                    <Col key={ele._id} sm={6} md={4} lg={4} >
                         <Card className="h-100">
                             <Card.Img variant="top" height="200px" src={`./product_images/${ele.product_image}`}
                                 onClick={() => navigate(`/productdetail?id=${ele._id}`)} />
@@ -129,7 +129,7 @@ export default function Product() {
                             <Collapse in={open.categories}>
                                 <ul style={{ paddingLeft: '10%' }}>
                                     {categories.map((ele) =>
-                                        <li className="overflow-hidden"> <Form.Check type="checkbox" name="category_id" label={ele.category_name} value={ele._id} /></li>
+                                        <li key={ele._id} className="overflow-hidden"> <Form.Check type="checkbox" name="category_id" label={ele.category_name} value={ele._id} /></li>
                                     )}
                                 </ul>
                             </Collapse>
@@ -141,7 +141,7 @@ export default function Product() {
                             <Collapse in={open.color}>
                                 <ul style={{ paddingLeft: '10%' }}>
                                     {colors.map((ele) =>
-                                        <li className="overflow-hidden"> <Form.Check type="checkbox" name="color_id" label={ele.color_name} value={ele._id} /></li>
+                                        <li key={ele._id} className="overflow-hidden"> <Form.Check type="checkbox" name="color_id" label={ele.color_name} value={ele._id} /></li>
                                     )}
                                 </ul>
                             </Collapse>
@@ -152,8 +152,12 @@ export default function Product() {
                 </Form>
             </div>
             <div className='productdiv2'>
-                <h5 className='text-end'>
-                    Sort By: <AiFillStar className='ms-1 me-1' /> <Button variant="light"><AiOutlineArrowUp /></Button><Button variant="light"><AiOutlineArrowDown /></Button>
+                <h5 className='d-flex justify-content-end align-items-center'>
+                    Sort By:
+                    <Button variant="light" className="ms-2"><AiFillStar className='ms-1 me-1' /></Button>
+                    <Button variant="light" className="ms-2">Price</Button>
+                    <Button variant="light" className="ms-2"><AiOutlineArrowUp /></Button>
+                    <Button variant="light" className="ms-2"><AiOutlineArrowDown /></Button>
                 </h5>
                 <Row>
                     <PaginatedItems itemsPerPage={6} />

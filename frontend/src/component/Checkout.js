@@ -8,8 +8,8 @@ export default function Checkout() {
             <h2 style={{ fontWeight: 'bolder' }}>Addresses</h2>
             <hr />
             {
-                [0, 1, 2].map((ele) =>
-                    <Card className="mb-3">
+                [0, 1, 2].map((ele, index) =>
+                    <Card key={index} className="mb-3">
                         <Card.Body>
                             <Card.Text className="d-flex">
                                 <p className='w-100'>

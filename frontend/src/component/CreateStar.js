@@ -5,12 +5,11 @@ export default function CreateStar(props) {
     const [arr] = useState([1, 2, 3, 4, 5])
     return (
         <span>
-            {arr.map((ele) =>
+            {arr.map((ele, index) =>
                 ele <= props.star ?
-                    <FaStar style={{ color: `rgb(250,240,0)` }} />
+                    <FaStar key={index} style={{ color: `rgb(250,240,0)` }} />
                     :
-                    <FaRegStar style={{ color: `rgb(250,240,0)` }} />
-
+                    <FaRegStar key={index} style={{ color: `rgb(250,240,0)` }} />
             )}
         </span>
     )
