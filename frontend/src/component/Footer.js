@@ -29,11 +29,11 @@ export default function Footer() {
             <div>
                 <h3>information</h3>
                 <ul >
-                    <li><span><a href="terms.pdf" target="_blank">Terms and Conditions</a></span></li>
+                    <li><span><a href="terms.pdf" target="_blank" rel="noopener noreferrer">Terms and Conditions</a></span></li>
                     <li><span>Gurantee and Return Policy</span></li>
                     <li><span>Contact Us</span></li>
                     <li><span>Privacy Policy</span></li>
-                    <li><span>Locate Us</span></li>
+                    <li><a href="https://www.google.com/maps/place/NeoSOFT+Technologies/@18.5790021,73.7387793,15z/data=!4m5!3m4!1s0x0:0x316090d140dfd0b3!8m2!3d18.579388!4d73.7388023" target="_blank" rel="noopener noreferrer">Locate Us</a></li>
                 </ul>
             </div>
             <div>
@@ -51,7 +51,7 @@ export default function Footer() {
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </Form>
-                        <p className="text-danger">{email.length != 0 ? (!regExpEmail.test(email) ? "Invalid email" : "") : ""}</p>
+                        <p className="errors">{email.length != 0 ? (!regExpEmail.test(email) ? "Invalid email" : "") : ""}</p>
                     </li>
                     <br />
                     <li><Button variant="light" onClick={() => email.length != 0 ? (!regExpEmail.test(email) ? "" : subscribe()) : ""}>Subscribe</Button></li>

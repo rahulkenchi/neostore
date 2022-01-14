@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import CreateStar from './CreateStar'
 import { useDispatch } from 'react-redux'
-import { getproductdetail } from '../config/Myservice'
+import { getproductdetail, addrating, addtocart } from '../config/Myservice'
 import { useLocation } from 'react-router-dom'
 import { BsFillShareFill } from 'react-icons/bs'
+import { Rating } from 'react-simple-star-rating'
 import { FacebookShareButton, TwitterShareButton, WhatsappShareButton, EmailShareButton, FacebookIcon, WhatsappIcon, TwitterIcon, EmailIcon } from 'react-share'
 import Magnifier from 'react-magnifier'
 import { Container, Tabs, Tab, Button } from 'react-bootstrap'
@@ -11,6 +12,8 @@ import { Container, Tabs, Tab, Button } from 'react-bootstrap'
 export default function ProductDetail() {
     const location = useLocation()
     const dispatch = useDispatch()
+    const [rating, setRating] = useState(0)
+    const [showrating, setShowRating] = useState(false)
     const [productDetail, setProductDetail] = useState(null)
     const [currentImage, setCurrentImage] = useState('')
     const [key, setKey] = useState('Description');
@@ -26,6 +29,20 @@ export default function ProductDetail() {
             .catch(err => console.log(err))
     }, [])
 
+    const handleRating = (rate) => {
+        setRating(rate)
+        setShowRating(false)
+        console.log(rate / 20)
+        let tmp = { '_id': productDetail._id, 'rating': Math.ceil(rate / 20) }
+        addrating(tmp)
+            .then(res => {
+                if (res.data.err === 0) {
+                    console.log(res.data.msg)
+                }
+            })
+            .catch(err => console.log(err))
+    }
+
     return (
         <Container className="my-2">
             <div className='productdetaildiv1'>
@@ -35,7 +52,7 @@ export default function ProductDetail() {
                     </p>
                     <p className="d-flex overflow-auto pb-3">
                         {productDetail && productDetail.product_subimages.map(ele =>
-                            <img height="60px" alt="no image" src={`./product_images/${ele}`} onClick={() => setCurrentImage(ele)} className="m-1" />
+                            <img loading="lazy" height="60px" alt='could not load images' src={`./product_images/${ele}`} onClick={() => setCurrentImage(ele)} className="m-1" />
                         )}
                     </p>
                 </div>
@@ -61,7 +78,10 @@ export default function ProductDetail() {
                         </EmailShareButton>
                     </p>
                     <p>
-                        <Button variant="info" onClick={() => dispatch({ type: 'INC' })}>Add to Cart</Button>
+                        <Button variant="info" onClick={() => { dispatch({ type: 'INC' }); addtocart(productDetail) }}>Add to Cart</Button>
+                        <Button varinat="light" className="ms-2" onClick={() => setShowRating(!showrating)}>Add Rating</Button><br /><br />
+                        {showrating &&
+                            <Rating onClick={handleRating} ratingValue={rating} />}
                     </p>
                 </div>
             </div>
@@ -80,6 +100,6 @@ export default function ProductDetail() {
                     </Tab>
                 </Tabs>
             </div>
-        </Container>
+        </Container >
     )
 }

@@ -4,10 +4,12 @@ const subscribeSchema = require('../models/subscribeSchema')
 const productSchema = require('../models/productSchema')
 const colorSchema = require('../models/colorSchema')
 const categoriesSchema = require('../models/categoriesSchema')
+const orderSchema = require('../models/orderSchema')
 const dotenv = require('dotenv')
 const bcrypt = require('bcrypt')
 const CryptoJS = require('crypto-js')
 const jwt = require('jsonwebtoken')
+const axios = require('axios')
 const express = require('express')
 const router = express.Router()
 dotenv.config()
@@ -81,7 +83,7 @@ router.post("/sentotp", async (req, res) => {
     });
     let info = await transporter.sendMail({
         from: process.env.user, // sender address
-        to: req.body.email, // list of receivers
+        to: req.body.email, // list of receivers 
         subject: "Reset your NeoStore Password.", // Subject line
         html: `<h3>Hello ${req.body.email} ,</h3>
             <p>
@@ -97,7 +99,7 @@ router.post("/sentotp", async (req, res) => {
             Yours,<br/>
             The NeoStore team
             </p>`, // plain text body
-        // html body
+        // html body 
     });
     console.log("Message sent: %s", info.messageId);
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
@@ -118,54 +120,109 @@ router.post("/sentotp", async (req, res) => {
 router.post("/login", (req, res) => {
     let bytes = CryptoJS.AES.decrypt(req.body.data, process.env.encryptSecret);
     let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-    // console.log(decryptedData)
-    userSchema.findOne({ email: decryptedData.email }, (err, data) => {
-        if (err) throw err;
-        else if (data != null) {
-            const bool = bcrypt.compareSync(decryptedData.password, data.password)
-            if (bool) {
-                let payload = {
-                    firstname: data.firstname,
-                    lastname: data.lastname,
-                    email: data.email,
-                    mobile: data.mobile,
-                    gender: data.gender
-                }
-                const token = jwt.sign(payload, process.env.jwtSecret, { expiresIn: 3600000 })
-                res.json({ err: 0, msg: "Login Successfully", token: token })
+    console.log(decryptedData)
+    if (decryptedData._provider != undefined && decryptedData._profile != undefined) {
+        userSchema.findOne({ email: decryptedData._profile.email }, (err, data) => {
+            if (err) throw err;
+            else if (data != null) {
+                const jwt_decode = require('jwt-decode')
+                console.log(jwt_decode(decryptedData._token.idToken), decryptedData)
+                res.json({ err: 0, msg: 'Login successfull' })
             }
             else {
-                res.json({ err: 1, msg: "Password does not match." })
+                res.json({ err: 3, msg: "User not found , please register first." })
             }
-        }
-        else {
-            res.json({ err: 2, msg: "User not found , please register first." })
-        }
-    })
+        })
+        // console.log(decryptedData)
+    }
+    else {
+        userSchema.findOne({ email: decryptedData.email }, (err, data) => {
+            if (err) throw err;
+            else if (data != null) {
+                const bool = bcrypt.compareSync(decryptedData.password, data.password)
+                if (bool) {
+                    let payload = {
+                        firstname: data.firstname,
+                        lastname: data.lastname,
+                        email: data.email,
+                        mobile: data.mobile,
+                        gender: data.gender,
+                    }
+                    const token = jwt.sign(payload, process.env.jwtSecret, { expiresIn: 3600000 })
+                    res.json({ err: 0, msg: "Login Successfully", token: token })
+                }
+                else {
+                    res.json({ err: 1, msg: "Password does not match." })
+                }
+            }
+            else {
+                res.json({ err: 2, msg: "User not found , please register first." })
+            }
+        })
+    }
 })
 
 router.post("/registeration", (req, res) => {
+    console.log('IN resgisteration')
     let bytes = CryptoJS.AES.decrypt(req.body.data, process.env.encryptSecret);
     let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+    console.log(decryptedData)
     userSchema.findOne({ email: decryptedData.email }, (err, data) => {
         if (err) throw err;
         else if (data != null) {
             res.json({ err: 1, msg: "User already exists" })
         }
         else {
-            let body = decryptedData
-            const salt = bcrypt.genSaltSync(Number(process.env.saltRounds))
-            const hash = bcrypt.hashSync(body.password, salt)
-            body.password = hash
-            let tmp = new userSchema(body)
-            tmp.save((err) => {
-                if (err) {
-                    res.json({ err: 2, msg: "Error registering user." })
-                }
-                else {
-                    res.json({ err: 0 })
-                }
-            })
+            if (decryptedData._provider != undefined && decryptedData._profile != undefined) {
+                axios.get(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${decryptedData._token.accessToken}`)
+                    .then(response => {
+                        console.log(response.data, response.data.error)
+                        if (response.data.error != undefined) {
+                            res.json({ err: 3, msg: `${decryptedData._provider} says ${response.data.error_description} ` })
+                        }
+                        else {
+                            if (response.data.email == decryptedData._profile.email) {
+                                let tmp = {
+                                    'firstname': decryptedData._profile.firstName,
+                                    'lastname': decryptedData._profile.lastName,
+                                    'email': decryptedData._profile.email,
+                                    'email_verified': response.data.email_verified,
+                                    'profilePicURL': decryptedData._profile.profilePicURL,
+                                    'sociallogin': {
+                                        '_provider': decryptedData._provider
+                                    }
+                                }
+                                console.log("Equaljwt_decode(decryptedData._token.idToken).email_verified,")
+                                let datasave = new userSchema(tmp)
+                                datasave.save(err => {
+                                    if (err) {
+                                        res.json({ err: 2, msg: "Error registering user." })
+                                    }
+                                    else {
+                                        res.json({ err: 0, msg: 'Registeration' })
+                                    }
+                                })
+                            }
+                        }
+
+                    })
+            }
+            else {
+                console.log("OK NEW USER", decryptedData)
+                let body = decryptedData
+                const salt = bcrypt.genSaltSync(Number(process.env.saltRounds))
+                const hash = bcrypt.hashSync(body.password, salt)
+                body.password = hash
+                let tmp = new userSchema(body)
+                tmp.save((err) => {
+                    if (err) {
+                        res.json({ err: 2, msg: "Error registering user." })
+                    }
+                    else {
+                        res.json({ err: 0 })
+                    }
+                })
+            }
         }
     })
 })
@@ -249,6 +306,105 @@ router.post("/profile", (req, res) => {
         else {
             res.json({ err: 1, msg: 'User not found' })
         }
+    })
+})
+
+router.post("/updateprofile", (req, res) => {
+    let email = req.body.data.email
+    let tmp = req.body.data
+    delete tmp.email
+    userSchema.findOneAndUpdate({ email: email }, tmp, (err) => {
+        if (err) res.json({ err: 1, msg: 'Updation err' });
+        else {
+            res.json({ err: 0, msg: 'Success' })
+        }
+    })
+})
+
+router.post("/addaddress", (req, res) => {
+    let email = req.body.data.email
+    let tmp = req.body.data
+    delete tmp.email
+    // console.log(tmp)
+    userSchema.findOneAndUpdate({ email: email }, { $push: { address: tmp } }, (err) => {
+        if (err) res.json({ err: 1, msg: 'Updation err' });
+        else {
+            res.json({ err: 0, msg: 'Success' })
+        }
+    })
+})
+
+router.post("/getaddress", (req, res) => {
+    userSchema.findOne({ email: req.body.email }, (err, data) => {
+        if (err) throw err;
+        else if (data != null) {
+            res.json({ err: 0, 'address': data.address, msg: 'Fetch success' })
+        }
+    })
+})
+
+router.post("/setaddress", (req, res) => {
+    userSchema.findOneAndUpdate({ email: req.body.email }, { $set: { address: req.body.address } }, (err) => {
+        if (err) res.json({ err: 1 })
+        else {
+            res.json({ err: 0, msg: 'Address modified' })
+        }
+    })
+})
+
+router.post("/getcart", (req, res) => {
+    userSchema.findOne({ email: req.body.email }, (err, data) => {
+        if (err) res.json({ err: 1, msg: "Error fetch cart in database" })
+        else {
+            userSchema.findOneAndUpdate({ email: req.body.email }, { $set: { cart: [] } }).then()
+            res.json({ err: 0, 'cart': data.cart })
+        }
+    })
+})
+
+router.post("/setcart", (req, res) => {
+    userSchema.findOneAndUpdate({ email: req.body.email }, { $set: { cart: req.body.cart } }, (err) => {
+        if (err) res.json({ err: 1, msg: "Error fetch cart in database" })
+        else {
+            res.json({ err: 0, 'msg': 'Cart set' })
+        }
+    })
+})
+
+router.post("/addrating", (req, res) => {
+    productSchema.findOne({ _id: req.body._id }, (err, data) => {
+        if (err) throw err;
+        else if (data != null) {
+            data.rating_count += 1
+            data.product_rating = (data.product_rating + req.body.rating) / data.rating_count
+            productSchema.updateOne({ _id: req.body._id }, { $set: { 'product_rating': data.product_rating, 'rating_count': data.rating_count } }, (err) => {
+                if (err) throw err;
+                else {
+                    res.json({ err: 0, msg: 'Rating success' })
+                }
+            })
+        }
+        else {
+            res.json({ err: 1, msg: 'Product not found' })
+        }
+    })
+})
+
+router.post("/orderaddress", (req, res) => {
+    let tmp = new orderSchema(req.body)
+    tmp.save(err => {
+        if (err) throw err;
+        else {
+            res.json({ err: 0 })
+        }
+    })
+})
+
+router.post("/getorder", (req, res) => {
+    orderSchema.find({ email: req.body.email }, (err, data) => {
+        if (err) throw err;
+        console.log(data)
+        res.json({ err: 0, 'order': data })
     })
 })
 

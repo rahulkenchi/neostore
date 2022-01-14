@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ReactPaginate from 'react-paginate'
 import CreateStar from './CreateStar'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { getproducts, getcategories, getcolors } from '../config/Myservice'
+import { getproducts, getcategories, getcolors, addtocart } from '../config/Myservice'
 import { useDispatch } from 'react-redux'
 import { AiFillStar, AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
 import { Button, Collapse, Card, Row, Col, Form } from 'react-bootstrap'
@@ -11,9 +11,11 @@ export default function Product() {
     const dispatch = useDispatch()
     const location = useLocation()
     const navigate = useNavigate()
+    const [originalfetchproducts, setOriginalFetchProducts] = useState([])
     const [product, setProduct] = useState([])
     const [categories, setCategories] = useState([])
     const [colors, setColors] = useState([])
+    const [sortingBy, setSortingBy] = useState('rating')
     const [open, setOpen] = useState({
         categories: false,
         color: false
@@ -23,6 +25,7 @@ export default function Product() {
         getproducts(location.search)
             .then(res => {
                 if (res.data.err == 0) {
+                    setOriginalFetchProducts(res.data.data)
                     setProduct(res.data.data)
                     //console.log(res.data.data)
                 }
@@ -46,6 +49,19 @@ export default function Product() {
             .catch(err => console.log(err))
     }, [])
 
+    const sortBy = (text) => {
+        let tmp = originalfetchproducts
+        switch (text) {
+            case 'up': {
+                setProduct([...tmp.sort((a, b) => b[sortingBy] - a[sortingBy])])
+            }
+                break;
+            case 'down': {
+                setProduct([...tmp.sort((a, b) => a[sortingBy] - b[sortingBy])])
+            }
+                break;
+        }
+    }
 
     function Items({ currentItems }) {
         return (<>
@@ -54,26 +70,26 @@ export default function Product() {
                     <Col key={ele._id} sm={6} md={4} lg={4} >
                         <Card className="h-100">
                             <Card.Img variant="top" height="200px" src={`./product_images/${ele.product_image}`}
-                                onClick={() => navigate(`/productdetail?id=${ele._id}`)} />
+                                loading="lazy" alt='could not load images' onClick={() => navigate(`/productdetail?id=${ele._id}`)} />
                             <Card.Body>
                                 <Card.Title style={{ color: 'blue' }}>{ele.product_name}</Card.Title>
                                 <Card.Text>
                                     <p><b><i className="fa fa-inr"></i>{ele.product_cost}</b></p>
-                                    <p className="text-center "><Button variant="danger"
-                                        onClick={() => dispatch({ type: 'INC' })}
-                                    >Add to Cart</Button></p>
+                                    <p className="text-center ">
+                                        <Button variant="danger"
+                                            onClick={() => { dispatch({ type: 'INC' }); addtocart(ele) }}
+                                        >
+                                            Add to Cart</Button></p>
                                     <p className="text-center"><CreateStar star={ele.product_rating} /></p>
                                 </Card.Text>
                             </Card.Body>
                         </Card>
                     </Col>
-                )
-                }
+                )}
             </Row>
         </>
         );
     }
-
 
     function PaginatedItems({ itemsPerPage }) {
         // We start with an empty list of items.
@@ -116,14 +132,13 @@ export default function Product() {
         );
     }
 
-
     return (
         <div className="d-flex justify-content-around p-3 product">
             <hr />
             <div className='productdiv1'>
                 <Form >
                     <ul className="p-0">
-                        <li><Button variant="light" className="w-100 my-2" type="submit" >All Products</Button></li>
+                        <li><Button variant="light" className="w-100 my-2" onClick={() => navigate("/product")} >All Products</Button></li>
                         <li><Button variant="light" aria-controls="example-collapse-text" aria-expanded={open.categories} className="text-start w-100 my-2 overflow-hidden">
                             <p onClick={() => setOpen({ ...open, categories: !open.categories })} className='m-0'>Categories</p>
                             <Collapse in={open.categories}>
@@ -154,14 +169,12 @@ export default function Product() {
             <div className='productdiv2'>
                 <h5 className='d-flex justify-content-end align-items-center'>
                     Sort By:
-                    <Button variant="light" className="ms-2"><AiFillStar className='ms-1 me-1' /></Button>
-                    <Button variant="light" className="ms-2">Price</Button>
-                    <Button variant="light" className="ms-2"><AiOutlineArrowUp /></Button>
-                    <Button variant="light" className="ms-2"><AiOutlineArrowDown /></Button>
+                    <Button variant="light" className="ms-2" onClick={() => { setSortingBy((prev) => { return 'product_rating' }); }}><AiFillStar className='ms-1 me-1' /></Button>
+                    <Button variant="light" className="ms-2" onClick={() => { setSortingBy((prev) => { return 'product_cost' }); }}>Price</Button>
+                    <Button variant="light" className="ms-2" onClick={() => sortBy('up')}><AiOutlineArrowUp /></Button>
+                    <Button variant="light" className="ms-2" onClick={() => sortBy('down')}><AiOutlineArrowDown /></Button>
                 </h5>
-                <Row>
-                    <PaginatedItems itemsPerPage={6} />
-                </Row>
+                <PaginatedItems itemsPerPage={6} />
             </div>
         </div >
     )

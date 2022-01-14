@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { getcarouselimages, getpopularproducts } from '../config/Myservice'
+import { getcarouselimages, getpopularproducts, addtocart } from '../config/Myservice'
 import { useNavigate } from 'react-router-dom'
 import CreateStar from './CreateStar'
 import { Carousel, Container, Button, Row, Col, Card } from 'react-bootstrap'
@@ -41,13 +41,13 @@ export default function Dashboard() {
                         <Col key={ele._id} sm={6} md={4} lg={4} className="d-flex justify-content-center g-3">
                             <Card style={{ width: "200px" }}>
                                 <Card.Img variant="top" height="150px" src={`./product_images/${ele.product_image}`}
-                                    onClick={() => navigate(`/productdetail?id=${ele._id}`)} />
+                                    loading="lazy" alt='could not load images' onClick={() => navigate(`/productdetail?id=${ele._id}`)} />
                                 <Card.Body>
                                     <Card.Title style={{ color: 'blue' }}>{ele.product_name}</Card.Title>
                                     <Card.Text>
                                         <p className="text-center">{ele.product_cost}</p>
                                         <p className="text-center" ><Button variant="danger"
-                                            onMouseOver={() => dispatch({ type: 'INC' })}
+                                            onClick={() => { dispatch({ type: 'INC' }); addtocart(ele) }}
                                         >Add to Cart</Button> </p>
                                         <p className="text-center"><CreateStar star={ele.product_rating} /></p>
                                     </Card.Text>

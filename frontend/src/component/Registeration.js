@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { registration, getenptoken } from '../config/Myservice'
 import SocialLogin from './SocialLogin'
 import jwt_decode from 'jwt-decode'
-import { AES } from 'crypto-js'
+import CryptoJS from 'crypto-js'
 import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
@@ -13,11 +13,7 @@ const regExpName = new RegExp(/^[a-zA-Z]{2,20}$/)
 const regExpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
 const regExpPass = new RegExp(/^[a-zA-Z0-9]{8,20}$/)
 const regMobile = new RegExp(/^[987][0-9]{9}$/)
-const styled = {
-    margin: 0,
-    fontSize: 'small',
-    color: 'red'
-}
+
 export default function Registeration() {
     const navigate = useNavigate()
     const [showpassword, setShowPassword] = useState(false)
@@ -71,10 +67,10 @@ export default function Registeration() {
                 let tmp2 = data
                 delete tmp2.confirm_password
                 let tmp3 = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
-                let send = AES.encrypt(JSON.stringify(tmp2), tmp3).toString();
+                let send = CryptoJS.AES.encrypt(JSON.stringify(tmp2), tmp3).toString();
                 registration({ data: send })
                     .then(res => {
-                        console.log(res.data.msg, '1');
+                        console.log(res.data.msg, res.data.err);
                         switch (res.data.err) {
                             case 0: navigate("/login")
                                 break;
@@ -98,14 +94,17 @@ export default function Registeration() {
     }
 
     const handleSocialLogin = (user) => {
-        console.log(user);
-        let a = {
-            firstname: user._profile.firstName,
-            lastname: user._profile.lastName,
-            email: user._profile.email,
-            profilepic: user._profile.profilePicURL,
-            token: user._token.accessToken
-        }
+        let tmp = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
+        let send = CryptoJS.AES.encrypt(JSON.stringify(user), tmp).toString()
+        registration({ 'data': send })
+            .then(res => {
+                if (res.data.err === 0)
+                    navigate("/login")
+                else {
+                    console.log(res.data.msg)
+                }
+            })
+            .catch(err => alert(JSON.stringify(err)))
     };
 
     const handleSocialLoginFailure = (err) => {
@@ -142,20 +141,20 @@ export default function Registeration() {
                         <FormControl type="text" placeholder="First Name" name="firstname" onChange={handler} />
                         {/* change icon here */}
                     </InputGroup>
-                    <p style={styled}>{errors.firstname}</p>
+                    <p className="errors">{errors.firstname}</p>
                 </Form.Group>
                 <Form.Group>
                     <InputGroup>
                         <FormControl type="text" placeholder="Last Name" name="lastname" onChange={handler} />
                     </InputGroup>
-                    <p style={styled}>{errors.lastname}</p>
+                    <p className="errors">{errors.lastname}</p>
                 </Form.Group>
                 <Form.Group>
                     <InputGroup>
                         <FormControl type="email" placeholder="Email Address" name="email" onChange={handler} />
                         <IoMdMail className="iconlogin" />
                     </InputGroup>
-                    <p style={styled}>{errors.email}</p>
+                    <p className="errors">{errors.email}</p>
 
                 </Form.Group>
                 <Form.Group>
@@ -167,7 +166,7 @@ export default function Registeration() {
                             <BsEyeSlashFill className="iconlogin" onClick={() => setShowPassword(true)} />
                         }
                     </InputGroup>
-                    <p style={styled}>{errors.password}<span style={{ color: 'black' }}>8-12 Alphanumeric characters</span></p>
+                    <p className="errors">{errors.password}<span style={{ color: 'black' }}>8-12 Alphanumeric characters</span></p>
                 </Form.Group>
                 <Form.Group>
                     <InputGroup>
@@ -178,22 +177,22 @@ export default function Registeration() {
                             <BsEyeSlashFill className="iconlogin" onClick={() => setShowConfirmPassword(true)} />
                         }
                     </InputGroup>
-                    <p style={styled}>{errors.confirm_password}<span style={{ color: 'black' }}>8-12 Alphanumeric characters</span></p>
+                    <p className="errors">{errors.confirm_password}<span style={{ color: 'black' }}>8-12 Alphanumeric characters</span></p>
                 </Form.Group>
                 <Form.Group>
                     <InputGroup>
                         <FormControl type="text" placeholder="Mobile No." name="mobile" onChange={handler} />
                         <MdPhone className="iconlogin" />
                     </InputGroup>
-                    <p style={styled}><span style={{ color: 'black' }}>Max 10</span>{errors.mobile}<span style={{ color: 'black' }}>{errors.mobile.length}/10</span></p>
+                    <p className="errors"><span style={{ color: 'black' }}>Max 10</span>{errors.mobile}<span style={{ color: 'black' }}>{errors.mobile.length}/10</span></p>
                 </Form.Group>
                 <Form.Group>
                     <input type='radio' value="Male" id="gender1" name="gender" onChange={handler} /><label for="gender1">Male</label>
                     <input type='radio' value="Female" id="gender2" name="gender" onChange={handler} /><label for="gender2">Female</label>
                 </Form.Group>
-                <p style={styled}>{errors.gender}</p>
+                <p className="errors">{errors.gender}</p>
                 <Button onClick={() => register()}>Register</Button>
-                <p style={styled}>{errors.submit}</p>
+                <p className="errors">{errors.submit}</p>
             </Form>
         </Container>
     )

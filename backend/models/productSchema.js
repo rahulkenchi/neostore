@@ -34,6 +34,9 @@ const productSchema = new mongoose.Schema({
     created_at: {
         type: Date,
         default: Date.now
+    },
+    rating_count: {
+        type: Number
     }
 })
 

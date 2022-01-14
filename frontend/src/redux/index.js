@@ -1,11 +1,16 @@
 import { combineReducers, createStore } from 'redux'
 
-let initialState = 0
+let initialState = 1
 
 export const cartReducer = (state = initialState, action) => {
+
     switch (action.type) {
-        case 'INC': return state + 1;
-        case 'DEC': return state - 1;
+        case 'INC': if (localStorage.getItem('cart') != undefined) {
+            return JSON.parse(localStorage.getItem('cart')).length
+        }
+        case 'DEC': if (localStorage.getItem('cart') != undefined) {
+            return JSON.parse(localStorage.getItem('cart')).length
+        }
         default: return state;
     }
 }

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { addaddress } from '../config/Myservice'
+import { orderaddress } from '../config/Myservice'
 import axios from 'axios'
 import jwt_decode from 'jwt-decode'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { MdSave } from 'react-icons/md'
 import { Form, FormControl, Button, Dropdown, DropdownButton, InputGroup, Alert } from 'react-bootstrap'
 const Apitoken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJfZW1haWwiOiJyZW5pcmlkNTc0QGRrYjMuY29tIiwiYXBpX3Rva2VuIjoiakNvaVNfT0xmR2oxb244TDlsUUQzbVRvVVdFQU5DNjhKNHdTczRVRlVOS0lTbVB2ZW5WQU9HRzJqUWVGVHd1SkpUVSJ9LCJleHAiOjE2NDIxODE3MDZ9.1eaVVL_5Tn3GXrpd2iIGy8kDvSuWX7JqVZniCGBXlIs'
-export default function AddNewAddress() {
+export default function OrderAddress() {
     const navigate = useNavigate()
+    const location = useLocation()
     const [fields, setFields] = useState({ country: 'India', state: 'Maharashtra', city: 'Pune', address: '', pincode: '' })
     const [errors, setErrors] = useState({ country: '', state: '', city: '', address: '', pincode: '' })
     const [displayfields, setDisplayfields] = useState({ country: [], state: [], city: [] })
@@ -44,17 +45,17 @@ export default function AddNewAddress() {
         let tmp = Object.keys(errors)
         let count = tmp.reduce((sum, ele) => sum + errors[ele].length, 0)
         if (count === 0) {
+            console.log("OK")
             let tmp2 = Object.keys(fields)
             let count2 = tmp2.reduce((sum, ele) => { if (fields[ele].length === 0) { return sum + 1 } return sum }, 0)
             if (count2 === 0) {
                 let sessiontmp = fields
                 sessiontmp.email = jwt_decode(sessionStorage.getItem('_token')).email
-                addaddress({ 'data': sessiontmp })
+                orderaddress({ 'buyer': location.state.email, 'orderlist': location.state.cart, 'total': location.state.total, 'address': fields })
                     .then(res => {
-                        //handle
-                        console.log(res.data)
+                        if (res.data.err === 0)
+                            navigate("/myaccount/order")
                     })
-                    .catch(err => console.log(err))
             }
             else {
                 setShowAlert(true)

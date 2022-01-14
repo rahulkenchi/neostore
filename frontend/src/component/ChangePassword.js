@@ -10,12 +10,6 @@ import { MdPhone, MdInfo } from 'react-icons/md'
 import { Container, Form, FormControl, InputGroup, Button } from 'react-bootstrap'
 
 
-const styled = {
-    margin: 0,
-    fontSize: 'small',
-    color: 'red'
-}
-
 export default function ChangePassword() {
     const [data, setData] = useState({ oldpassword: '', password: '', confirmpassword: '' })
     const [errors, setErrors] = useState({ oldpassword: '', password: '', confirmpassword: '', submit: '' })
@@ -72,7 +66,7 @@ export default function ChangePassword() {
                                 <BsEyeSlashFill className="iconlogin" onClick={() => setOldPassword(true)} />
                             }
                         </InputGroup>
-                        <p style={styled}>{errors.oldpassword}</p>
+                        <p className="errors">{errors.oldpassword}</p>
                     </Form.Group>
                     <Form.Group>
                         <InputGroup>
@@ -83,7 +77,7 @@ export default function ChangePassword() {
                                 <BsEyeSlashFill className="iconlogin" onClick={() => setShowPassword(true)} />
                             }
                         </InputGroup>
-                        <p style={styled}>{errors.password}</p>
+                        <p className="errors">{errors.password}</p>
                     </Form.Group>
                     <Form.Group>
                         <InputGroup>
@@ -94,10 +88,10 @@ export default function ChangePassword() {
                                 <BsEyeSlashFill className="iconlogin" onClick={() => setShowConfirmPassword(true)} />
                             }
                         </InputGroup>
-                        <p style={styled}>{errors.showconfirmpassword}</p>
+                        <p className="errors">{errors.showconfirmpassword}</p>
                     </Form.Group>
                     <Button onClick={() => changepassword()}>Submit</Button>
-                    <p style={styled}>{errors.submit}</p>
+                    <p className="errors">{errors.submit}</p>
                 </Form>
             </div>
         </Container>

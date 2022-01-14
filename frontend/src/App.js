@@ -19,38 +19,37 @@ const ErrorBoundary = React.lazy(() => import('./component/ErrorBoundary'));
 const Dashboard = React.lazy(() => import('./component/Dashboard'))
 const ProductDetail = React.lazy(() => import('./component/ProductDetail'))
 const Cart = React.lazy(() => import("./component/Cart"))
-
+const OrderAddress = React.lazy(() => import('./component/OrderAddress'))
 
 function App() {
   const loading = <div className="text-center"><Spinner animation="border" /></div>
 
   return (
-    <Suspense fallback={loading}>
-      <BrowserRouter>
-        <Suspense fallback={loading}><NavigationBar /></Suspense>
-        <Suspense fallback={loading}>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Registeration />} />
-            <Route path="/recoverpassword" element={<RecoverPassword />} />
-            <Route path="/product" element={<Product />} />
-            <Route path="/productdetail" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/myaccount" element={<MyAccount />} >
-              <Route path="" element={<Profile />} />
-              <Route path="changepassword" element={<ChangePassword />} />
-              <Route path="addnewaddress" element={<AddNewAddress />} />
-              <Route path="address" element={<Checkout />} />
-              <Route path="order" element={<Order />} />
-              <Route path="checkout" element={<Checkout />} />
-            </Route>
-            {/* <Route path="*" element={<ChangePassword />} /> */}
-          </Routes>
-        </Suspense>
-        <Suspense fallback={loading}><Footer /></Suspense>
-      </BrowserRouter>
-    </Suspense>
+    <BrowserRouter>
+      <Suspense fallback={loading}><NavigationBar /></Suspense>
+      <Suspense fallback={loading}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Registeration />} />
+          <Route path="/recoverpassword" element={<RecoverPassword />} />
+          <Route path="/product" element={<Product />} />
+          <Route path="/productdetail" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/orderaddress" element={<OrderAddress />} />
+          <Route path="/myaccount" element={<MyAccount />} >
+            <Route path="" element={<Profile />} />
+            <Route path="changepassword" element={<ChangePassword />} />
+            <Route path="addnewaddress" element={<AddNewAddress />} />
+            <Route path="address" element={<Checkout />} />
+            <Route path="order" element={<Order />} />
+            <Route path="checkout" element={<Checkout />} />
+          </Route>
+          {/* <Route path="*" element={<ChangePassword />} /> */}
+        </Routes>
+      </Suspense>
+      <Suspense fallback={loading}><Footer /></Suspense>
+    </BrowserRouter>
   );
 }
 

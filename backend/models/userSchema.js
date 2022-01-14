@@ -14,29 +14,35 @@ const userSchema = new mongoose.Schema({
     },
     mobile: {
         type: String,
-        required: true
     },
     gender: {
         type: String,
-        required: true
     },
     password: {
         type: String,
-        required: true
     },
     date: {
         type: Date,
         default: Date.now
     },
     otp: {
-        type: String,
-        default: 'NO'
+        type: Number,
+        default: null
     },
     email_verified: {
         type: Boolean,
         default: false
     },
-    address: Array
+    sociallogin: {
+        _provider: {
+            type: String,
+        }
+    },
+    profilePicURL: {
+        type: String,
+    },
+    address: Array,
+    cart: Array
 })
 
 module.exports = mongoose.model("userSchema", userSchema)

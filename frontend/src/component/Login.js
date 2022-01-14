@@ -8,11 +8,7 @@ import { IoMdMail } from 'react-icons/io'
 import { ImFacebook, ImGoogle, ImTwitter } from 'react-icons/im'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
 import { Form, FormControl, Button, InputGroup, Spinner } from 'react-bootstrap'
-const styled = {
-    margin: 0,
-    fontSize: 'small',
-    color: 'red'
-}
+
 export default function Login() {
     const navigate = useNavigate()
     const [data, setData] = useState({ email: '', password: '' })
@@ -38,18 +34,21 @@ export default function Login() {
     }
 
     const handleSocialLogin = (user) => {
-        console.log(user);
-        let a = {
-            firstname: user._profile.firstName,
-            lastname: user._profile.lastName,
-            email: user._profile.email,
-            profilepic: user._profile.profilePicURL,
-            token: user._token.accessToken
-        }
+        let tmp = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
+        let send = CryptoJS.AES.encrypt(JSON.stringify(user), tmp).toString()
+        login({ data: send })
+            .then(res => {
+                if (res.data.err === 0)
+                    navigate("/")
+                else {
+                    console.log(res.data.msg)
+                }
+            })
+            .catch(err => alert(JSON.stringify(err)))
     };
 
     const handleSocialLoginFailure = (err) => {
-        console.error(err);
+        alert('sorry login failed.')
     };
 
     const submit = () => {
@@ -85,7 +84,7 @@ export default function Login() {
                     appId="530980681768179"
                     onLoginSuccess={handleSocialLogin}
                     onLoginFailure={handleSocialLoginFailure}>
-                    <ImFacebook style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Facebook
+                    <ImFacebook className="fs-4 me-2" />Login with Facebook
                 </SocialLogin>
                 <SocialLogin
                     style={{ backgroundColor: '#DB4437', width: '30vw', height: '10vh' }}
@@ -94,16 +93,17 @@ export default function Login() {
                     appId="443267988237-4lch3ldhcbf9150nm7urethq8kaicd9o.apps.googleusercontent.com"
                     onLoginSuccess={handleSocialLogin}
                     onLoginFailure={handleSocialLoginFailure}>
-                    <ImGoogle style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Google
+                    <ImGoogle className="fs-4 me-2" />Login with Google
                 </SocialLogin>
                 <SocialLogin
                     style={{ backgroundColor: '#1DA1F2', width: '30vw', height: '10vh' }}
-                    className="google"
+                    className='google'
                     provider="google"
                     appId="443267988237-4lch3ldhcbf9150nm7urethq8kaicd9o.apps.googleusercontent.com"
                     onLoginSuccess={handleSocialLogin}
                     onLoginFailure={handleSocialLoginFailure}>
-                    <ImTwitter style={{ fontSize: 'xx-large', paddingRight: '10px' }} />Login with Twitter                    </SocialLogin>
+                    <ImTwitter className="fs-4 me-2" />Login with Twitter
+                </SocialLogin>
                 <p className="w-100 text-end"><span style={{ cursor: 'pointer' }} onClick={() => navigate("/register")}>Register Now</span></p>
             </div >
             <hr />
@@ -115,7 +115,7 @@ export default function Login() {
                             <FormControl type="email" placeholder="Email Address" name="email" onChange={handler} />
                             <IoMdMail className="iconlogin" />
                         </InputGroup>
-                        <p style={styled}>{errors.email}</p>
+                        <p className="errors">{errors.email}</p>
                     </Form.Group>
                     <Form.Group>
                         <InputGroup>
@@ -126,10 +126,10 @@ export default function Login() {
                                 <BsEyeSlashFill className="iconlogin" onClick={() => setShowPassword(true)} />
                             }
                         </InputGroup>
-                        <p style={styled}>{errors.password}</p>
+                        <p className="errors">{errors.password}</p>
                     </Form.Group>
                     <Button onClick={() => submit()}>Login</Button>
-                    <p style={styled}>{errors.submit}</p>
+                    <p className="errors">{errors.submit}</p>
                 </Form>
                 <p className='w-100 text-start'><span style={{ cursor: 'pointer' }} onClick={() => navigate("/recoverpassword", { state: { email: data.email } })}>Forgot Password ?</span></p>
             </div>

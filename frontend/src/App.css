@@ -11,6 +11,10 @@ a{
   color:inherit
 }
 
+.box-shadow{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 .App {
   text-align: center;
 }
@@ -102,7 +106,7 @@ margin:auto 10px auto 5px;
   align-items: center;
 }
 
-.socialLogin>div,.google,.facebook{
+.socialLogin>SocialLogin,.google,.facebook{
   display: flex;  
   justify-content: center;
   align-items: center;
@@ -209,22 +213,29 @@ box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),0 8px 10px 0 rgba(0, 0, 0, 0.10);
 
 .paginationcss + ul {
 display: flex; 
-justify-content: space-evenly; 
+justify-content:center; 
 list-style: none;  
+padding:0px;
 margin: 20px auto; 
-width: 40%;
 } 
 
 .paginationcss + ul > li { 
-border: 2px solid rgba(13, 202, 240); 
-min-width: 30px;
-border-radius: 15px; 
+border: 2px solid rgb(216, 216, 216); 
+min-width: 40px;
+height:40px;
+border-radius: 6px; 
 padding: 2px; 
+margin:auto 4px;
 box-sizing: border-box; 
 text-align: center; 
-color: rgba(13, 202, 240);
+color:white;
+background-color: rgb(173, 173, 173);
 }
-           
+          
+.paginationcss + ul > li:hover,.selected{ 
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 .paginationcss + ul > li:last-child > a, .paginationcss + ul > li:nth-child(1) > a {
 margin: auto 10px; 
 }
@@ -237,7 +248,18 @@ margin: auto 10px;
 .productdetaildiv1>div{
   width:50%;  
 }
-            
+       
+.icon-cart-red{
+  color:red;  
+  font-size: x-large;
+}
+
+.errors{
+    margin: 0;
+    font-size: small;
+    color: red
+}
+
 @media screen and (max-width: 500px) {
 
   .loginpage{
