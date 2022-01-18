@@ -74,7 +74,7 @@ export default function OrderAddress() {
                 <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
                 <p>Some fields are empty not valid.</p>
             </Alert>
-            <Form className='p-3' style={{ borderRadius: '10px', boxShadow: `0 4px 8px 0 rgba(0, 0, 0, 0.2)` }}>
+            <Form className='p-3 w-75 mx-auto m-2' style={{ borderRadius: '10px', boxShadow: `0 4px 8px 0 rgba(0, 0, 0, 0.2)` }}>
                 <h2>Add new address</h2>
                 <hr />
                 <Form.Group className="mb-3">

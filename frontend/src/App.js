@@ -20,6 +20,7 @@ const Dashboard = React.lazy(() => import('./component/Dashboard'))
 const ProductDetail = React.lazy(() => import('./component/ProductDetail'))
 const Cart = React.lazy(() => import("./component/Cart"))
 const OrderAddress = React.lazy(() => import('./component/OrderAddress'))
+const Invoice = React.lazy(() => import('./component/Invoice'))
 
 function App() {
   const loading = <div className="text-center"><Spinner animation="border" /></div>
@@ -37,6 +38,7 @@ function App() {
           <Route path="/productdetail" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/orderaddress" element={<OrderAddress />} />
+          <Route path="/invoice" element={<Invoice />} />
           <Route path="/myaccount" element={<MyAccount />} >
             <Route path="" element={<Profile />} />
             <Route path="changepassword" element={<ChangePassword />} />

@@ -1,40 +1,48 @@
 import React, { useState, useEffect } from 'react'
 import jwt_decode from 'jwt-decode'
 import { getorder, setcart } from '../config/Myservice'
-import { Card, Button } from 'react-bootstrap'
+import { Card, Button, Row, Col } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 
 export default function Order() {
-    const [order, setOrder] = useState()
+    const navigate = useNavigate()
+    const [order, setOrder] = useState(null)
 
     useEffect(async () => {
         await getorder({ email: jwt_decode(sessionStorage.getItem('_token')).email })
             .then(res => {
+                console.log(res.data.order)
                 if (res.data.err === 0) {
-                    setcart(res.data.order)
+                    setOrder(res.data.order)
                 }
             })
             .catch(err => console.log(err))
     }, [])
 
+    const pdf = (ele) => {
+        navigate("/invoice", { state: ele })
+    }
+
     return (
         <div>
-
             {order && order.map((ele, index) =>
-                <Card key={index} style={{}}>
+                <Card key={index} >
                     <Card.Body>
-                        <Card.Title><b style={{ color: "orange" }}>TRANSIT</b> Order By:{order.buyer}</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">Placed on :{order.date}</Card.Subtitle>
+                        <Card.Title><b style={{ color: "orange" }}>TRANSIT</b> Order By :  {ele.buyer}</Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">Placed on :{ele.date} /    <span className="text-success">  <i className="fa fa-rupee"></i>{ele.total}</span></Card.Subtitle>
                         <hr />
-                        <Card.Text>
-                            {order.orderlist.map((ele) =>
-                                <img loading="lazy" alt='could not load images' width="150px" height="auto" src={`http://localhost:3000/product_images/${ele.product_image}`} />
-                            )}
+                        <Card.Text className="d-flex overflow-auto">
+                            {
+                                ele.orderlist.map((ele) =>
+                                    <img className="m-1" loading="lazy" alt='could not load images' width="150px" height="auto" src={`http://localhost:3000/product_images/${ele.product_image}`} />
+                                )
+                            }
                         </Card.Text>
                         <hr /><br />
-                        <Button variant="primary">Download Invoice as PDF</Button>
+                        <Button variant="primary" onClick={() => pdf(ele)}>Download Invoice as PDF</Button>
                     </Card.Body>
                 </Card>
             )}
-        </div>
+        </div >
     )
 }

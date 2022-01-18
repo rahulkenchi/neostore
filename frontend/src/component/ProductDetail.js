@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import CreateStar from './CreateStar'
 import { useDispatch } from 'react-redux'
 import { getproductdetail, addrating, addtocart } from '../config/Myservice'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { BsFillShareFill } from 'react-icons/bs'
 import { Rating } from 'react-simple-star-rating'
 import { FacebookShareButton, TwitterShareButton, WhatsappShareButton, EmailShareButton, FacebookIcon, WhatsappIcon, TwitterIcon, EmailIcon } from 'react-share'
@@ -12,6 +12,7 @@ import { Container, Tabs, Tab, Button } from 'react-bootstrap'
 export default function ProductDetail() {
     const location = useLocation()
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const [rating, setRating] = useState(0)
     const [showrating, setShowRating] = useState(false)
     const [productDetail, setProductDetail] = useState(null)
@@ -19,7 +20,7 @@ export default function ProductDetail() {
     const [key, setKey] = useState('Description');
 
     useEffect(() => {
-        console.log(location.search)
+        if (location.search.length < 1) { alert('no product selected. redirect to products'); navigate("/product") }
         getproductdetail(location.search)
             .then(res => {
                 setProductDetail(res.data)
@@ -27,7 +28,7 @@ export default function ProductDetail() {
                 // console.log(res.data)
             })
             .catch(err => console.log(err))
-    }, [])
+    }, [location.search])
 
     const handleRating = (rate) => {
         setRating(rate)

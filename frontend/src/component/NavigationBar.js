@@ -5,13 +5,13 @@ import { MdAccountBox } from 'react-icons/md'
 import { FaShoppingCart } from 'react-icons/fa'
 import { RiLogoutCircleRLine } from 'react-icons/ri'
 import { GrSearch } from 'react-icons/gr'
-import { useNavigate, NavLink, useParams } from 'react-router-dom'
+import { useNavigate, NavLink, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { Navbar, Container, Nav, Form, Button, FormControl, NavDropdown, Collapse, InputGroup } from 'react-bootstrap'
 
 export default function NavigationBar() {
     const navigate = useNavigate()
-    const params = useParams()
+    const location = useLocation()
     const [inputtext, setInputText] = useState('')
     const cartcount = useSelector(state => state.cartReducer)
     const [searchList, setSearchList] = useState([])
@@ -45,7 +45,7 @@ export default function NavigationBar() {
         <>
             <Navbar bg="dark" expand="lg" >
                 <Container fluid >
-                    <Navbar.Brand style={{ color: 'white', fontSize: 'x-large', margin: ' auto 5vw' }}>Neo<strong style={{ color: 'red' }}>STORE</strong></Navbar.Brand>
+                    <Navbar.Brand style={{ color: 'white', fontSize: 'x-large', margin: 'auto 5vw' }}>Neo<strong style={{ color: 'red' }}>STORE</strong></Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll">
                         <Nav
