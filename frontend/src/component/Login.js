@@ -104,15 +104,6 @@ export default function Login() {
                     onLoginFailure={handleSocialLoginFailure}>
                     <ImGoogle className="fs-4 me-2" />Login with Google
                 </SocialLogin>
-                <SocialLogin
-                    style={{ backgroundColor: '#1DA1F2', width: '30vw', height: '10vh' }}
-                    className='google'
-                    provider="google"
-                    appId="443267988237-4lch3ldhcbf9150nm7urethq8kaicd9o.apps.googleusercontent.com"
-                    onLoginSuccess={handleSocialLogin}
-                    onLoginFailure={handleSocialLoginFailure}>
-                    <ImTwitter className="fs-4 me-2" />Login with Twitter
-                </SocialLogin>
                 <p className="w-100 text-end"><span style={{ cursor: 'pointer' }} onClick={() => navigate("/register")}>Register Now</span></p>
             </div >
             <hr />

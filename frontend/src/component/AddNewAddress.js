@@ -28,6 +28,7 @@ export default function AddNewAddress() {
             .then(res => { setDisplayfields({ ...displayfields, city: res.data }); })
     }, [fields.state])
 
+
     function handler(e) {
         setFields({ ...fields, [e.target.name]: e.target.value })
         if (e.target.name == "address") {

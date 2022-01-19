@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, lazy } from 'react'
 import { useDispatch } from 'react-redux'
 import { getcarouselimages, getpopularproducts, addtocart } from '../config/Myservice'
 import { useNavigate } from 'react-router-dom'
-import CreateStar from './CreateStar'
 import { Carousel, Container, Button, Row, Col, Card } from 'react-bootstrap'
+const CreateStar = lazy(() => import('./CreateStar'))
 
 
 export default function Dashboard() {

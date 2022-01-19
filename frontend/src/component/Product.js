@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, lazy } from 'react'
 import ReactPaginate from 'react-paginate'
-import CreateStar from './CreateStar'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { getproducts, getcategories, getcolors, addtocart } from '../config/Myservice'
 import { useDispatch } from 'react-redux'
 import { AiFillStar, AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai'
 import { Button, Collapse, Card, Row, Col, Form } from 'react-bootstrap'
+const CreateStar = lazy(() => import('./CreateStar'))
 
 export default function Product() {
     const dispatch = useDispatch()

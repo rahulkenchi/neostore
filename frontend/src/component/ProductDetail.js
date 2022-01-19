@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import CreateStar from './CreateStar'
+import React, { useEffect, useState, lazy } from 'react'
 import { useDispatch } from 'react-redux'
 import { getproductdetail, addrating, addtocart } from '../config/Myservice'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -8,6 +7,7 @@ import { Rating } from 'react-simple-star-rating'
 import { FacebookShareButton, TwitterShareButton, WhatsappShareButton, EmailShareButton, FacebookIcon, WhatsappIcon, TwitterIcon, EmailIcon } from 'react-share'
 import Magnifier from 'react-magnifier'
 import { Container, Tabs, Tab, Button } from 'react-bootstrap'
+const CreateStar = lazy(() => import('./CreateStar'))
 
 export default function ProductDetail() {
     const location = useLocation()
@@ -52,8 +52,8 @@ export default function ProductDetail() {
                         <Magnifier src={`./product_images/${currentImage}`} width="100%" />
                     </p>
                     <p className="d-flex overflow-auto pb-3">
-                        {productDetail && productDetail.product_subimages.map(ele =>
-                            <img loading="lazy" height="60px" alt='could not load images' src={`./product_images/${ele}`} onClick={() => setCurrentImage(ele)} className="m-1" />
+                        {productDetail && productDetail.product_subimages.map((ele, index) =>
+                            <img key={index} loading="lazy" height="60px" alt='could not load images' src={`./product_images/${ele}`} onClick={() => setCurrentImage(ele)} className="m-1" />
                         )}
                     </p>
                 </div>
@@ -94,10 +94,10 @@ export default function ProductDetail() {
                     className="mb-3"
                 >
                     <Tab eventKey="Description" title="Description">
-                        <p>dsa</p>
+                        {productDetail && <p>{productDetail.product_desc}</p>}
                     </Tab>
                     <Tab eventKey="Features" title="Features">
-                        <p>dsa</p>
+                        {productDetail && <p>{productDetail.product_features}</p>}
                     </Tab>
                 </Tabs>
             </div>
