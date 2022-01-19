@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     mobile: {
         type: String,
@@ -38,8 +39,13 @@ const userSchema = new mongoose.Schema({
             type: String,
         }
     },
+    isSocialLogin: {
+        type: Boolean,
+        required: true
+    },
     profilePicURL: {
         type: String,
+        default: ""
     },
     address: Array,
     cart: Array

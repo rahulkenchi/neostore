@@ -1,19 +1,30 @@
 import React, { useState } from 'react'
+import { subscribe } from '../config/Myservice'
 import { Button, Form, FormControl } from 'react-bootstrap'
 const regExpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+
 export default function Footer() {
     const [email, setEmail] = useState('')
-    const subscribe = () => {
-        subscribe({ email: email })
-            .then(res => {
-                if (res.data.err != 0) {
-                    alert(res.data.msg)
-                }
-                else {
-                    setEmail('')
-                }
-            })
+
+    const submit = () => {
+        if (regExpEmail.test(email)) {
+            console.log("OK")
+            subscribe({ 'email': email })
+                .then(res => {
+                    if (res.data.err === 0) {
+                        alert('Thank you for subscribing.')
+                    }
+                    else if (res.data.err > 0) {
+                        alert(res.data.msg)
+                    }
+                })
+        }
+        else {
+            alert("Something went wrong , sorry to inform you , you are not yet subscribed to our website , we definitly miss not having you.")
+        }
+
     }
+
     return (<>
         <div className="customneofooter">
             <div>
@@ -54,7 +65,7 @@ export default function Footer() {
                         <p className="errors">{email.length != 0 ? (!regExpEmail.test(email) ? "Invalid email" : "") : ""}</p>
                     </li>
                     <br />
-                    <li><Button variant="light" onClick={() => email.length != 0 ? (!regExpEmail.test(email) ? "" : subscribe()) : ""}>Subscribe</Button></li>
+                    <li><Button variant="light" onClick={() => submit()}>Subscribe</Button></li>
                 </ul>
             </div>
         </div>

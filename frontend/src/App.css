@@ -1,7 +1,8 @@
 *{
   margin:0;
-  padding:0;
+  padding:0;  
 }
+
 ul{
   list-style: none;
 }
@@ -13,6 +14,14 @@ a{
 
 .box-shadow{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.width-25{
+  width:25%
+}
+
+.width-70{
+  width:70%
 }
 
 .App {
@@ -179,16 +188,9 @@ margin:auto 10px auto 5px;
 
 .myaccountmain{
   display: flex;
-  justify-content: space-around;
+  justify-content: space-around;  
 }
 
-.myaccountmaindiv1{
-  width:'25%'
-}
-
-.myaccountmaindiv2{
-  width:'70%'
-}
 
 .myaccountsidebar>button{
   color:blue;
@@ -318,4 +320,5 @@ margin:5px auto;
   .productdetaildiv1>div{
     width:100%;  
   }
+
 }

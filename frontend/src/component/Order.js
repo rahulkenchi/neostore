@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import jwt_decode from 'jwt-decode'
-import { getorder, setcart } from '../config/Myservice'
-import { Card, Button, Row, Col } from 'react-bootstrap'
+import { getorder } from '../config/Myservice'
+import { Card, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 
 export default function Order() {
@@ -9,6 +9,7 @@ export default function Order() {
     const [order, setOrder] = useState(null)
 
     useEffect(async () => {
+        console.log(jwt_decode(sessionStorage.getItem('_token')).email)
         await getorder({ email: jwt_decode(sessionStorage.getItem('_token')).email })
             .then(res => {
                 console.log(res.data.order)
@@ -29,7 +30,7 @@ export default function Order() {
                 <Card key={index} >
                     <Card.Body>
                         <Card.Title><b style={{ color: "orange" }}>TRANSIT</b> Order By :  {ele.buyer}</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">Placed on :{ele.date} /    <span className="text-success">  <i className="fa fa-rupee"></i>{ele.total}</span></Card.Subtitle>
+                        <Card.Subtitle className="mb-2 text-muted">Placed on :{ele.date.slice(0, 10).replace(/-/g, '/')} /    <span className="text-success">  <i className="fa fa-inr"></i>{ele.total}</span></Card.Subtitle>
                         <hr />
                         <Card.Text className="d-flex overflow-auto">
                             {
@@ -43,6 +44,7 @@ export default function Order() {
                     </Card.Body>
                 </Card>
             )}
+            {order && order.length === 0 && <Card className="box-shadow p-3"><Card.Text><h6>No Orders Found. <span style={{ cursor: 'pointer', color: 'blue' }} onClick={() => navigate("/product")}>Order Now</span> ?</h6></Card.Text></Card>}
         </div >
     )
 }

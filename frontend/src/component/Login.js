@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import jwt_decode from 'jwt-decode'
 import CryptoJS from 'crypto-js'
 import SocialLogin from './SocialLogin'
+import { useDispatch } from 'react-redux'
 import { getenptoken, login } from '../config/Myservice'
 import { useNavigate } from 'react-router-dom'
 import { IoMdMail } from 'react-icons/io'
@@ -11,9 +12,11 @@ import { Form, FormControl, Button, InputGroup, Spinner } from 'react-bootstrap'
 
 export default function Login() {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [data, setData] = useState({ email: '', password: '' })
     const [errors, setErrors] = useState({ email: '', password: '', submit: '' })
     const [showpassword, setShowPassword] = useState(false)
+    const [spinner, setSpinner] = useState(false)
 
     useEffect(() => {
         getenptoken()
@@ -38,10 +41,14 @@ export default function Login() {
         let send = CryptoJS.AES.encrypt(JSON.stringify(user), tmp).toString()
         login({ data: send })
             .then(res => {
-                if (res.data.err === 0)
+                if (res.data.err === 0) {
+                    setErrors({ ...errors, email: '', password: '' });
+                    sessionStorage.setItem('_token', res.data.token);
+                    dispatch({ type: 'isLogin' })
                     navigate("/")
+                }
                 else {
-                    console.log(res.data.msg)
+                    alert(res.data.msg)
                 }
             })
             .catch(err => alert(JSON.stringify(err)))
@@ -62,6 +69,7 @@ export default function Login() {
                     case 0: {
                         setErrors({ ...errors, email: '', password: '' });
                         sessionStorage.setItem('_token', res.data.token);
+                        dispatch({ type: 'isLogin' })
                         navigate("/")//navigate to home
                     }
                         break;
@@ -70,8 +78,9 @@ export default function Login() {
                     case 2: setErrors({ ...errors, email: res.data.msg, password: '' })
                         break;
                 }
+                setSpinner(false)
             })
-            .catch(err => { if (err) throw err; })
+            .catch(err => { if (err) throw err; setSpinner(false) })
     }
 
     return (
@@ -128,7 +137,7 @@ export default function Login() {
                         </InputGroup>
                         <p className="errors">{errors.password}</p>
                     </Form.Group>
-                    <Button onClick={() => submit()}>Login</Button>
+                    <Button onClick={() => { setSpinner(true); submit() }} disabled={spinner}> {spinner && <Spinner animation="border" size="sm" />} Login</Button>
                     <p className="errors">{errors.submit}</p>
                 </Form>
                 <p className='w-100 text-start'><span style={{ cursor: 'pointer' }} onClick={() => navigate("/recoverpassword", { state: { email: data.email } })}>Forgot Password ?</span></p>

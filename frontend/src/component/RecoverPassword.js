@@ -3,20 +3,20 @@ import { recoverpassword, sentotp, getenptoken } from '../config/Myservice'
 import jwt_decode from 'jwt-decode'
 import CryptoJS from 'crypto-js'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { IoMdMail } from 'react-icons/io'
 import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs'
 import { AiOutlineInfo } from 'react-icons/ai'
-import { MdPhone, MdInfo } from 'react-icons/md'
 import { Container, Form, FormControl, InputGroup, Button } from 'react-bootstrap'
-
-
+const regExpOtp = new RegExp(/^[0-9]{6}$/)
+const regExpPass = new RegExp(/^[a-zA-Z0-9]{8,20}$/)
 const styled = {
     margin: 0,
     fontSize: 'small',
-    color: 'red'
+    color: 'red',
+    textAlign: 'start'
 }
 
 export default function RecoverPassword() {
+    const navigate = useNavigate()
     const location = useLocation()
     const [data, setData] = useState({ verificationcode: '', password: '', confirmpassword: '' })
     const [errors, setErrors] = useState({ verificationcode: '', password: '', confirmpassword: '', submit: '' })
@@ -28,10 +28,15 @@ export default function RecoverPassword() {
     useEffect(() => {
         sentotp({ email: location.state.email })
             .then(res => {
+                console.log(res.data)
                 if (res.data.err === 0) {
                     sessionStorage.setItem('enpstd', res.data.token)
                     setMsg(true);
                     setMsgOtpErr(false)
+                }
+                else {
+                    alert(res.data.msg)
+                    navigate("/register")
                 }
             })
             .catch(err => { setMsg(false); setMsgOtpErr(true) })
@@ -44,23 +49,47 @@ export default function RecoverPassword() {
         let n = e.target.name
         let v = e.target.value
         setData({ ...data, [n]: v })
-        console.log(n, e.target.value)
+        if (n === "verificationcode") {
+            !regExpOtp.test(v) ? setErrors({ ...errors, [n]: "OTP must be of 6 digits only" }) : setErrors({ ...errors, [n]: "" })
+        }
+        if (n === "password") {
+            !regExpPass.test(v) ? setErrors({ ...errors, [n]: "Not a valid Password" }) : setErrors({ ...errors, [n]: "" })
+        }
+        if (n === "confirmpassword") {
+            !regExpPass.test(v) ? setErrors({ ...errors, [n]: "Not a valid Password" }) : setErrors({ ...errors, [n]: "" })
+        }
+        console.log(n, v, !regExpOtp.test(v))
     }
 
     const submit = () => {
-        let tmp = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
-        let tmp2 = data
-        delete tmp2.confirmpassword
-        tmp2.email = location.state.email
-        console.log(tmp2)
-        let send = CryptoJS.AES.encrypt(JSON.stringify(tmp2), tmp).toString();
-        console.log(send)
-        recoverpassword({ data: send })
-            .then(res => {
-                if (res.data.err === 0)
-                    console.log("PASSWORD CHANGED")
-            })
-            .catch(err => console.log(err))
+        let temp = Object.keys(errors)
+        temp.pop()
+        let count = temp.reduce((sum, ele) => sum + errors[ele].length, 0)
+        if (count === 0) {
+            let t = Object.keys(data)
+            let count2 = t.reduce((sum, ele) => { if (data[ele].length === 0) { return sum + 1 } return sum }, 0)
+            if (count2 === 0) {
+                let tmp = jwt_decode(sessionStorage.getItem('enpstd')).enpstd
+                let tmp2 = { ...data }
+                delete tmp2.confirmpassword
+                tmp2.email = location.state.email
+                console.log(tmp2)
+                let send = CryptoJS.AES.encrypt(JSON.stringify(tmp2), tmp).toString();
+                console.log(send)
+                recoverpassword({ data: send })
+                    .then(res => {
+                        if (res.data.err === 0)
+                            navigate("/login")
+                    })
+                    .catch(err => console.log(err))
+            }
+            else if (count2 != 0) {
+                setErrors({ ...errors, submit: 'Some fields are empty' })
+            }
+        }
+        else if (count != 0) {
+            setErrors({ ...errors, submit: 'Some fields are empty' })
+        }
     }
 
     return (
@@ -98,7 +127,7 @@ export default function RecoverPassword() {
                                 <BsEyeSlashFill className="iconlogin" onClick={() => setShowConfirmPassword(true)} />
                             }
                         </InputGroup>
-                        <p style={styled}>{errors.showconfirmpassword}</p>
+                        <p style={styled}>{errors.confirmpassword}</p>
                     </Form.Group>
                     <Button onClick={() => submit()}>Submit</Button>
                     <p style={styled}>{errors.submit}</p>

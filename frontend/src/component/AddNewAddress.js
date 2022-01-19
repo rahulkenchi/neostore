@@ -51,8 +51,13 @@ export default function AddNewAddress() {
                 sessiontmp.email = jwt_decode(sessionStorage.getItem('_token')).email
                 addaddress({ 'data': sessiontmp })
                     .then(res => {
-                        //handle
-                        console.log(res.data)
+                        // console.log(res.data)
+                        if (res.data.err === 0) {
+                            navigate("/myaccount/checkout")
+                        }
+                        else {
+                            alert(res.data.msg)
+                        }
                     })
                     .catch(err => console.log(err))
             }

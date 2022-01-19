@@ -3,12 +3,16 @@ import { updateprofile } from '../config/Myservice'
 import jwt_decode from 'jwt-decode'
 import { MdSave } from 'react-icons/md'
 import { MdModeEditOutline } from 'react-icons/md'
-import { Button, Row, Col, Modal, Form } from 'react-bootstrap'
+import { Button, Row, Col, Modal, Form, Spinner } from 'react-bootstrap'
+const regExpName = new RegExp(/^[a-zA-Z]{2,20}$/)
+const regMobile = new RegExp(/^[987][0-9]{9}$/)
 
 export default function Profile() {
-    const [data, setData] = useState({})
+    const [spinner, setSpinner] = useState(false)
+    const [data, setData] = useState({ firstname: '', lastname: '', mobile: '', gender: '', email: '' })
+    const [errors, setErrors] = useState({ firstname: '', lastname: '', mobile: '', gender: 'not selected', submit: '' })
     const [modalShow, setModalShow] = useState(false);
-    const [updatedData, setUpdatedData] = useState({})
+    const [updatedData, setUpdatedData] = useState({ firstname: '', lastname: '', mobile: '', gender: '' })
 
     useEffect(() => {
         if (sessionStorage.getItem('_token')) {
@@ -19,31 +23,73 @@ export default function Profile() {
         }
     }, [])
 
+    useEffect(() => {
+        setUpdatedData({ firstname: '', lastname: '', mobile: '', gender: '' })
+        setErrors({ firstname: '', lastname: '', mobile: '', gender: 'not selected', submit: '' })
+        setSpinner(false)
+    }, [modalShow])
+
     const handler = (e) => {
-        e.preventDefault()
-        console.log(modalShow)
+        let n = e.target.name
+        let v = e.target.value
         setUpdatedData({ ...updatedData, [e.target.name]: e.target.value })
         console.log(e.target.name, e.target.value)
+        if (n === "firstname" || n === "lastname") {
+            !regExpName.test(v) ? setErrors({ ...errors, [n]: "Not a valid Name" }) : setErrors({ ...errors, [n]: "" })
+        }
+        else if (n === "mobile") {
+            !regMobile.test(v) ? setErrors({ ...errors, [n]: "Not a valid Mobile" }) : setErrors({ ...errors, [n]: "" })
+        }
+        else if (n === "gender") {
+            setErrors({ ...errors, [n]: "" })
+        }
+        if (errors.submit.length != 0) { setErrors({ ...errors, submit: '' }) }
     }
 
     const profilesave = () => {
-        let tmp = updatedData
-        tmp.email = data.email
-        console.log(tmp)
-        updateprofile({ 'data': tmp })
-            .then(res => {
-                if (res.data.err === 0) {
-                    setModalShow(false)
-                }
-                else {
-                    alert('data failed to update')
-                }
-            })
+        let tmp = Object.keys(errors)
+        tmp.pop()
+        let count = tmp.reduce((sum, ele) => sum + errors[ele].length, 0)
+        if (count === 0) {
+            let t = Object.keys(updatedData)
+            let count2 = t.reduce((sum, ele) => { if (updatedData[ele].length === 0) { return sum + 1 } return sum }, 0)
+            if (count2 === 0) {
+                let temp = updatedData
+                temp.email = data.email
+                console.log(temp, count2, count)
+                updateprofile({ 'data': temp })
+                    .then(res => {
+                        if (res.data.err === 0) {
+                            sessionStorage.setItem('_token', res.data.token);
+                            setModalShow(false)
+                            setData(jwt_decode(sessionStorage.getItem('_token')))
+                        }
+                        else {
+                            alert(res.data.msg)
+                        }
+                        setSpinner(false);
+                    })
+                    .catch(err => {
+                        alert("error connecting registering user please try again later.");
+                        setSpinner(false);
+                    })
+            }
+            else if (count2 != 0) {
+                console.log("Count2", count2)
+                setErrors({ ...errors, submit: 'Some fields are empty' })
+                setSpinner(false)
+            }
+        }
+        else if (count != 0) {
+            console.log("Count", count)
+            setErrors({ ...errors, submit: 'Some fields are empty' })
+            setSpinner(false)
+        }
     }
 
     return (
         <div className='p-3' style={{ borderRadius: '10px', boxShadow: `0 4px 8px 0 rgba(0, 0, 0, 0.2)` }}>
-            <h2>Profile</h2>
+            <h2>Profile</h2>{console.log(updatedData, "OK", spinner, "ERR", errors)}
             <hr />
             <div>
                 <Row>
@@ -87,6 +133,7 @@ export default function Profile() {
                         <Col>
                             <Form.Group className="mb-3">
                                 <Form.Control placeholder={data.firstname} onChange={handler} name="firstname" />
+                                <p className="errors">{errors.firstname}</p>
                             </Form.Group>
                         </Col>
                     </Row>
@@ -95,14 +142,17 @@ export default function Profile() {
                         <Col>
                             <Form.Group className="mb-3">
                                 <Form.Control placeholder={data.lastname} onChange={handler} name="lastname" />
+                                <p className="errors">{errors.lastname}</p>
                             </Form.Group>
                         </Col>
                     </Row>
                     <Row>
                         <Col md={3} lg={3}><b>Gender</b></Col>
                         <Col>
-                            <Form.Group className="mb-3">
-                                <Form.Control placeholder={data.gender} onChange={handler} name="gender" />
+                            <Form.Group>
+                                <input type='radio' value="Male" id="gender1" name="gender" onChange={handler} /><label for="gender1">Male</label>
+                                <input type='radio' value="Female" id="gender2" name="gender" onChange={handler} /><label for="gender2">Female</label>
+                                <p className="errors">{errors.gender}</p>
                             </Form.Group>
                         </Col>
                     </Row>
@@ -111,6 +161,7 @@ export default function Profile() {
                         <Col>
                             <Form.Group className="mb-3">
                                 <Form.Control placeholder={data.mobile} onChange={handler} name="mobile" />
+                                <p className="errors">{errors.mobile}</p>
                             </Form.Group>
                         </Col>
                     </Row>
@@ -123,9 +174,10 @@ export default function Profile() {
                         </Col>
                     </Row>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={() => profilesave()}><MdSave style={{ fontSize: 'x-large' }} />   Save</Button>
+                <Modal.Footer className='position-relative mb-3'>
+                    <Button variant="primary" onClick={() => { setSpinner(true); profilesave() }} disabled={spinner}>{spinner && <Spinner animation="border" size="sm" />} <MdSave style={{ fontSize: 'x-large' }} />   Save</Button>
                     <Button variant="outline-danger" onClick={() => setModalShow(false)}>Close</Button>
+                    <span className='errors position-absolute' style={{ bottom: '-5px', right: '45px' }}>{errors.submit}</span>
                 </Modal.Footer>
             </Modal >
         </div >

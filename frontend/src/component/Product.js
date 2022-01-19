@@ -47,7 +47,7 @@ export default function Product() {
                 }
             })
             .catch(err => console.log(err))
-    }, [])
+    }, [location.search])
 
     const sortBy = (text) => {
         let tmp = originalfetchproducts
@@ -86,6 +86,7 @@ export default function Product() {
                         </Card>
                     </Col>
                 )}
+                {currentItems && currentItems.length == 0 && <h4 className="text-center">Sorry no Items matchs your filter</h4>}
             </Row>
         </>
         );
@@ -138,7 +139,7 @@ export default function Product() {
             <div className='productdiv1'>
                 <Form >
                     <ul className="p-0">
-                        <li><Button variant="light" className="w-100 my-2" onClick={() => navigate("/product")} >All Products</Button></li>
+                        <li><Button variant="light" className="w-100 my-2" onClick={() => { navigate("/product"); }} >All Products</Button></li>
                         <li><Button variant="light" aria-controls="example-collapse-text" aria-expanded={open.categories} className="text-start w-100 my-2 overflow-hidden">
                             <p onClick={() => setOpen({ ...open, categories: !open.categories })} className='m-0'>Categories</p>
                             <Collapse in={open.categories}>

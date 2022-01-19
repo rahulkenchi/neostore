@@ -5,15 +5,16 @@ import { MdAccountBox } from 'react-icons/md'
 import { FaShoppingCart } from 'react-icons/fa'
 import { RiLogoutCircleRLine } from 'react-icons/ri'
 import { GrSearch } from 'react-icons/gr'
-import { useNavigate, NavLink, useLocation } from 'react-router-dom'
+import { useNavigate, NavLink, useLocation, Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { Navbar, Container, Nav, Form, Button, FormControl, NavDropdown, Collapse, InputGroup } from 'react-bootstrap'
 
 export default function NavigationBar() {
     const navigate = useNavigate()
-    const location = useLocation()
-    const [inputtext, setInputText] = useState('')
+    const dispatch = useDispatch()
+    const isLogin = useSelector(state => state.userReducer)
     const cartcount = useSelector(state => state.cartReducer)
+    const [inputtext, setInputText] = useState('')
     const [searchList, setSearchList] = useState([])
     const [show, setShow] = useState(false)
 
@@ -33,11 +34,14 @@ export default function NavigationBar() {
         }
     }
 
+    useEffect(() => { dispatch({ type: 'isLogin' }) }, [])
+
     const signout = () => {
         let data = JSON.parse(localStorage.getItem('cart'))
-        // setcart({ 'email': jwt_decode(sessionStorage.getItem('_token')).email, 'cart': data })
+        setcart({ 'email': jwt_decode(sessionStorage.getItem('_token')).email, 'cart': data })
         localStorage.removeItem('cart')
         sessionStorage.removeItem('_token')
+        dispatch({ type: 'isLogin' })
         navigate("/")
     }
 
@@ -84,8 +88,8 @@ export default function NavigationBar() {
                                             aria-controls="example-collapse-text"
                                         />
                                         {inputtext.length > 0 &&
-                                            <Collapse className="position-absolute p-3 w-100" in={show} >
-                                                <div style={{ maxHeight: '25vh', overflow: 'auto', backgroundColor: `white`, zIndex: 1 }}>
+                                            <Collapse className="position-absolute p-3 w-100" in={show}>
+                                                <div className="bg-white overflow-auto box-shadow" style={{ borderRadius: '10px', maxHeight: '25vh', zIndex: 1 }}>
                                                     {
                                                         searchList.map(ele =>
                                                             <p className="" onClick={() => { navigate(`/productdetail?id=${ele._id}`) }}>&nbsp;{ele.product_name}</p>
@@ -123,9 +127,18 @@ export default function NavigationBar() {
                             title={<MdAccountBox style={{ color: 'black', width: '30px', height: '27px' }} />}
                             id="navbarScrollingDropdown"
                             style={{ marginRight: '7vw', width: '70px', height: '38px', borderRadius: '5px' }}>
-                            <NavDropdown.Item><NavLink to="/myaccount">My Account</NavLink></NavDropdown.Item>
-                            <NavDropdown.Item><NavLink to="/myaccount">Profile</NavLink></NavDropdown.Item>
-                            <NavDropdown.Item onClick={() => signout()}>Signout&nbsp;&nbsp;<RiLogoutCircleRLine /></NavDropdown.Item>
+                            {isLogin ?
+                                <>
+                                    <NavDropdown.Item as={Link} to="/myaccount">My Account</NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/myaccount">Profile</NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => signout()}>Signout&nbsp;&nbsp;<RiLogoutCircleRLine /></NavDropdown.Item>
+                                </>
+                                :
+                                <>
+                                    <NavDropdown.Item as={Link} to="/login">Login</NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/register">Registeration</NavDropdown.Item>
+                                </>
+                            }
                         </NavDropdown>
                     </Navbar.Collapse>
                 </Container >

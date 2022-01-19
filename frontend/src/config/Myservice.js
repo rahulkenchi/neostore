@@ -36,7 +36,7 @@ export function subscribe(data) {
     return axios.post(`${MAIN_URL}/subscribe`, data)
 }
 
-export function registration(data) {
+export function registeration(data) {
     return axios.post(`${MAIN_URL}/registeration`, data)
 }
 

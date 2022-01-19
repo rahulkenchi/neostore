@@ -29,26 +29,28 @@ function App() {
     <BrowserRouter>
       <Suspense fallback={loading}><NavigationBar /></Suspense>
       <Suspense fallback={loading}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Registeration />} />
-          <Route path="/recoverpassword" element={<RecoverPassword />} />
-          <Route path="/product" element={<Product />} />
-          <Route path="/productdetail" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/orderaddress" element={<OrderAddress />} />
-          <Route path="/invoice" element={<Invoice />} />
-          <Route path="/myaccount" element={<MyAccount />} >
-            <Route path="" element={<Profile />} />
-            <Route path="changepassword" element={<ChangePassword />} />
-            <Route path="addnewaddress" element={<AddNewAddress />} />
-            <Route path="address" element={<Checkout />} />
-            <Route path="order" element={<Order />} />
-            <Route path="checkout" element={<Checkout />} />
-          </Route>
-          {/* <Route path="*" element={<ChangePassword />} /> */}
-        </Routes>
+        <div className='py-3'>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Registeration />} />
+            <Route path="/recoverpassword" element={<RecoverPassword />} />
+            <Route path="/product" element={<Product />} />
+            <Route path="/productdetail" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/orderaddress" element={<OrderAddress />} />
+            <Route path="/invoice" element={<Invoice />} />
+            <Route path="/myaccount" element={<MyAccount />} >
+              <Route path="" element={<Profile />} />
+              <Route path="changepassword" element={<ChangePassword />} />
+              <Route path="addnewaddress" element={<AddNewAddress />} />
+              <Route path="address" element={<Checkout />} />
+              <Route path="order" element={<Order />} />
+              <Route path="checkout" element={<Checkout />} />
+            </Route>
+            {/* <Route path="*" element={<ChangePassword />} /> */}
+          </Routes>
+        </div>
       </Suspense>
       <Suspense fallback={loading}><Footer /></Suspense>
     </BrowserRouter>
