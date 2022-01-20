@@ -17,24 +17,6 @@ const connectDB = async () => {
     }
 }
 
-function authenticationToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    if (token == null) {
-        res.json({ err: 1, msg: "Token not found" })
-    }
-    else {
-        jwt.verify(token, process.env.jwtSecret, (err, data) => {
-            if (err) { res.json({ err: 1, msg: "Token incorrect" }) }
-            else {
-                console.log("Token match")
-                next();
-            }
-        })
-    }
-
-}
-
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))

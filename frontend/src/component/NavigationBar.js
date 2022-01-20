@@ -5,9 +5,9 @@ import { MdAccountBox } from 'react-icons/md'
 import { FaShoppingCart } from 'react-icons/fa'
 import { RiLogoutCircleRLine } from 'react-icons/ri'
 import { GrSearch } from 'react-icons/gr'
-import { useNavigate, NavLink, useLocation, Link } from 'react-router-dom'
+import { useNavigate, NavLink, Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { Navbar, Container, Nav, Form, Button, FormControl, NavDropdown, Collapse, InputGroup } from 'react-bootstrap'
+import { Navbar, Container, Nav, Form, FormControl, NavDropdown, Collapse, InputGroup } from 'react-bootstrap'
 
 export default function NavigationBar() {
     const navigate = useNavigate()
@@ -39,6 +39,11 @@ export default function NavigationBar() {
     const signout = () => {
         let data = JSON.parse(localStorage.getItem('cart'))
         setcart({ 'email': jwt_decode(sessionStorage.getItem('_token')).email, 'cart': data })
+            .then(res => {
+                if (res.data.err > 0)
+                    alert(res.data.msg)
+            })
+            .catch(err => console.log(err))
         localStorage.removeItem('cart')
         sessionStorage.removeItem('_token')
         dispatch({ type: 'isLogin' })

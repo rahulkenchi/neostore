@@ -14,6 +14,23 @@ const express = require('express')
 const router = express.Router()
 dotenv.config()
 
+function authenticationToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if (token == null) {
+        res.json({ err: 1, msg: "Token not found" })
+    }
+    else {
+        jwt.verify(token, process.env.jwtSecret, (err, data) => {
+            if (err) { res.json({ err: 1, msg: "Token incorrect" }) }
+            else {
+                console.log("Token match")
+                next();
+            }
+        })
+    }
+}
+
 router.get("/", (req, res) => {
     let payload = {
         enpstd: process.env.encryptSecret
@@ -256,7 +273,7 @@ router.post("/registeration", (req, res) => {
     })
 })
 
-router.post("/changepassword", (req, res) => {
+router.post("/changepassword", authenticationToken, (req, res) => {
     let bytes = CryptoJS.AES.decrypt(req.body.data, process.env.encryptSecret);
     let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
     console.log(decryptedData)
@@ -344,7 +361,7 @@ router.post("/profile", (req, res) => {
     })
 })
 
-router.post("/updateprofile", (req, res) => {
+router.post("/updateprofile", authenticationToken, (req, res) => {
     let email = req.body.data.email
     let tmp = req.body.data
     console.log(req.body.data)
@@ -368,7 +385,7 @@ router.post("/updateprofile", (req, res) => {
     })
 })
 
-router.post("/addaddress", (req, res) => {
+router.post("/addaddress", authenticationToken, (req, res) => {
     let email = req.body.data.email
     let tmp = req.body.data
     delete tmp.email
@@ -381,7 +398,7 @@ router.post("/addaddress", (req, res) => {
     })
 })
 
-router.post("/getaddress", (req, res) => {
+router.post("/getaddress", authenticationToken, (req, res) => {
     userSchema.findOne({ email: req.body.email }, (err, data) => {
         if (err) throw err;
         else if (data != null) {
@@ -390,7 +407,7 @@ router.post("/getaddress", (req, res) => {
     })
 })
 
-router.post("/setaddress", (req, res) => {
+router.post("/setaddress", authenticationToken, (req, res) => {
     userSchema.findOneAndUpdate({ email: req.body.email }, { $set: { address: req.body.address } }, (err) => {
         if (err) res.json({ err: 1 })
         else {
@@ -399,7 +416,7 @@ router.post("/setaddress", (req, res) => {
     })
 })
 
-router.post("/getcart", (req, res) => {
+router.post("/getcart", authenticationToken, (req, res) => {
     userSchema.findOne({ email: req.body.email }, (err, data) => {
         if (err) res.json({ err: 1, msg: "Error fetch cart in database" })
         else {
@@ -409,7 +426,7 @@ router.post("/getcart", (req, res) => {
     })
 })
 
-router.post("/setcart", (req, res) => {
+router.post("/setcart", authenticationToken, (req, res) => {
     userSchema.findOneAndUpdate({ email: req.body.email }, { $set: { cart: req.body.cart } }, (err) => {
         if (err) res.json({ err: 1, msg: "Error fetch cart in database" })
         else {
@@ -437,7 +454,7 @@ router.post("/addrating", (req, res) => {
     })
 })
 
-router.post("/orderaddress", (req, res) => {
+router.post("/orderaddress", authenticationToken, (req, res) => {
     let tmp = new orderSchema(req.body)
     tmp.save(err => {
         if (err) throw err;
@@ -447,7 +464,7 @@ router.post("/orderaddress", (req, res) => {
     })
 })
 
-router.post("/getorder", (req, res) => {
+router.post("/getorder", authenticationToken, (req, res) => {
     orderSchema.find({ buyer: req.body.email }, (err, data) => {
         if (err) throw err;
         res.json({ err: 0, 'order': data.reverse() })

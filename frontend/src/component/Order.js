@@ -16,6 +16,9 @@ export default function Order() {
                 if (res.data.err === 0) {
                     setOrder(res.data.order)
                 }
+                else {
+                    alert(res.data.msg)
+                }
             })
             .catch(err => console.log(err))
     }, [])

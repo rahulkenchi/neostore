@@ -22,38 +22,43 @@ export default function Cart() {
             let userCart = []
             await getcart({ 'email': jwt_decode(sessionStorage.getItem('_token')).email })
                 .then(res => {
-                    userCart = res.data.cart
-                    console.log(userCart)
-                    if (res.data.cart.length != 0) {
-                        if (localStorage.getItem('cart') != undefined) {
-                            let tmp = JSON.parse(localStorage.getItem('cart'))
-                            tmp.map((x) => {
-                                let check = 1;
-                                userCart.map((y) => {
-                                    if (x._id == y._id) {
-                                        y.product_quantity += x.product_quantity;
-                                        check = 0;
+                    if (res.data.err === 0) {
+                        userCart = res.data.cart
+                        console.log(userCart)
+                        if (res.data.cart.length != 0) {
+                            if (localStorage.getItem('cart') != undefined) {
+                                let tmp = JSON.parse(localStorage.getItem('cart'))
+                                tmp.map((x) => {
+                                    let check = 1;
+                                    userCart.map((y) => {
+                                        if (x._id == y._id) {
+                                            y.product_quantity += x.product_quantity;
+                                            check = 0;
+                                        }
+                                    })
+                                    if (check) {
+                                        console.log(x)
+                                        userCart.push(x)
                                     }
                                 })
-                                if (check) {
-                                    console.log(x)
-                                    userCart.push(x)
-                                }
-                            })
-                            console.log(userCart)
-                            setCart([...userCart])
-                            localStorage.setItem('cart', JSON.stringify([...userCart]))
-                            // total(userCart)
+                                console.log(userCart)
+                                setCart([...userCart])
+                                localStorage.setItem('cart', JSON.stringify([...userCart]))
+                                // total(userCart)
+                            }
+                            else {
+                                localStorage.setItem('cart', JSON.stringify(userCart))
+                            }
                         }
                         else {
-                            localStorage.setItem('cart', JSON.stringify(userCart))
+                            if (localStorage.getItem('cart') != undefined) {
+                                let tmp = JSON.parse(localStorage.getItem('cart'))
+                                setCart([...tmp])
+                            }
                         }
                     }
-                    else {
-                        if (localStorage.getItem('cart') != undefined) {
-                            let tmp = JSON.parse(localStorage.getItem('cart'))
-                            setCart([...tmp])
-                        }
+                    else if (res.data.err > 0) {
+                        alert(res.data.msg)
                     }
                 })
         }

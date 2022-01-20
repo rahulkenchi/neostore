@@ -29,7 +29,7 @@ export function login(data) {
 }
 
 export function changepassword(data) {
-    return axios.post(`${MAIN_URL}/changepassword`, data)
+    return axios.post(`${MAIN_URL}/changepassword`, data, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('_token')}` } })
 }
 
 export function subscribe(data) {
@@ -81,19 +81,19 @@ export function getprofile(data) {
 }
 
 export function updateprofile(data) {
-    return axios.post(`${MAIN_URL}/updateprofile`, data)
+    return axios.post(`${MAIN_URL}/updateprofile`, data, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('_token')}` } })
 }
 
 export function addaddress(data) {
-    return axios.post(`${MAIN_URL}/addaddress`, data)
+    return axios.post(`${MAIN_URL}/addaddress`, data, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('_token')}` } })
 }
 
 export function getaddress(data) {
-    return axios.post(`${MAIN_URL}/getaddress`, data)
+    return axios.post(`${MAIN_URL}/getaddress`, data, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('_token')}` } })
 }
 
 export function setaddress(data) {
-    return axios.post(`${MAIN_URL}/setaddress`, data)
+    return axios.post(`${MAIN_URL}/setaddress`, data, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('_token')}` } })
 }
 
 export function addrating(data) {
@@ -101,17 +101,17 @@ export function addrating(data) {
 }
 
 export function getcart(data) {
-    return axios.post(`${MAIN_URL}/getcart`, data)
+    return axios.post(`${MAIN_URL}/getcart`, data, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('_token')}` } })
 }
 
 export function setcart(data) {
-    return axios.post(`${MAIN_URL}/setcart`, data)
+    return axios.post(`${MAIN_URL}/setcart`, data, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('_token')}` } })
 }
 
 export function orderaddress(data) {
-    return axios.post(`${MAIN_URL}/orderaddress`, data)
+    return axios.post(`${MAIN_URL}/orderaddress`, data, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('_token')}` } })
 }
 
 export function getorder(data) {
-    return axios.post(`${MAIN_URL}/getorder`, data)
+    return axios.post(`${MAIN_URL}/getorder`, data, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('_token')}` } })
 }

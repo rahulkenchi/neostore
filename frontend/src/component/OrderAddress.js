@@ -57,6 +57,9 @@ export default function OrderAddress() {
                             localStorage.setItem('cart', '[]')
                             navigate("/myaccount/order")
                         }
+                        else {
+                            alert(res.data.msg)
+                        }
                     })
             }
             else {

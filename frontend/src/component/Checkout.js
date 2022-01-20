@@ -12,8 +12,13 @@ export default function Checkout() {
             let email = jwt_decode(sessionStorage.getItem('_token')).email
             getaddress({ 'email': email })
                 .then(res => {
-                    setAddress(res.data.address)
-                    // console.log(res.data)
+                    if (res.data.err === 0) {
+                        setAddress(res.data.address)
+                        // console.log(res.data)
+                    }
+                    else {
+                        alert(res.data.msg)
+                    }
                 })
                 .catch(err => console.log(err))
         }
@@ -29,7 +34,7 @@ export default function Checkout() {
                     setAddress([...tmp])
                 }
                 else {
-                    alert('error deleting address')
+                    alert(res.data.msg)
                 }
             })
             .catch(err => console.log(err))
