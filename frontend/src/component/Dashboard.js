@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux'
 import { getcarouselimages, getpopularproducts, addtocart } from '../config/Myservice'
 import { useNavigate } from 'react-router-dom'
 import { Carousel, Container, Button, Row, Col, Card } from 'react-bootstrap'
+import { getcart } from '../config/Myservice'
+import jwt_decode from 'jwt-decode'
 const CreateStar = lazy(() => import('./CreateStar'))
 
 
@@ -16,6 +18,54 @@ export default function Dashboard() {
             .then(res => setCarouselImages(res.data))
         getpopularproducts()
             .then(res => setPopularProducts(res.data))
+    }, [])
+
+    useEffect(async () => {
+        if (sessionStorage.getItem('_token') != undefined) {//when user logs in
+            let userCart = []
+            await getcart({ 'email': jwt_decode(sessionStorage.getItem('_token')).email })
+                .then(res => {
+                    if (res.data.err === 0) {
+                        userCart = res.data.cart
+                        console.log(userCart)
+                        if (res.data.cart.length != 0) {
+                            if (localStorage.getItem('cart') != undefined) {
+                                let tmp = JSON.parse(localStorage.getItem('cart'))
+                                tmp.map((x) => {
+                                    let check = 1;
+                                    userCart.map((y) => {
+                                        if (x._id == y._id) {
+                                            y.product_quantity += x.product_quantity;
+                                            check = 0;
+                                        }
+                                    })
+                                    if (check) {
+                                        console.log(x)
+                                        userCart.push(x)
+                                    }
+                                })
+                                console.log(userCart)
+                                // setCart([...userCart])
+                                localStorage.setItem('cart', JSON.stringify([...userCart]))
+                                // total(userCart)
+                            }
+                            else {
+                                localStorage.setItem('cart', JSON.stringify(userCart))
+                            }
+                        }
+                        else {
+                            if (localStorage.getItem('cart') != undefined) {
+                                let tmp = JSON.parse(localStorage.getItem('cart'))
+                                // setCart([...tmp])
+                            }
+                        }
+                    }
+                    else if (res.data.err > 0) {
+                        alert(res.data.msg)
+                    }
+                })
+        }
+        dispatch({ type: 'INC' })
     }, [])
 
     return (

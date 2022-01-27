@@ -114,13 +114,13 @@ export default function NavigationBar() {
                             <NavLink to="/cart">
                                 <div className="d-flex align-items-center justify-content-center bg-white position-relative" style={{ width: '70px', height: '38px', borderRadius: '5px' }}>
                                     <FaShoppingCart className="fs-5" />
-                                    {cartcount == 0 ? "" :
+                                    {localStorage.getItem('cart') != undefined &&
                                         <span className="position-absolute  fw-bold text-white"
                                             style={{
                                                 top: '0px', borderRadius: '50%', fontSize: '12px',
                                                 backgroundColor: '#ff1656', padding: '1px 3px', left: '21px'
                                             }}>
-                                            {cartcount}
+                                            {localStorage.getItem('cart') != undefined ? JSON.parse(localStorage.getItem('cart')).length : ""}
                                         </span>
                                     }
                                     &nbsp;&nbsp;Cart
@@ -132,7 +132,7 @@ export default function NavigationBar() {
                             title={<MdAccountBox style={{ color: 'black', width: '30px', height: '27px' }} />}
                             id="navbarScrollingDropdown"
                             style={{ marginRight: '7vw', width: '70px', height: '38px', borderRadius: '5px' }}>
-                            {isLogin ?
+                            {sessionStorage.getItem('_token') != undefined ?
                                 <>
                                     <NavDropdown.Item as={Link} to="/myaccount">My Account</NavDropdown.Item>
                                     <NavDropdown.Item as={Link} to="/myaccount">Profile</NavDropdown.Item>
